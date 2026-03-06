@@ -75,7 +75,7 @@ Item {
             width: flip.width
             height: flip.height
             color: root.backgroundColor
-            radius: CommonProperties.geom.cardRadius
+            radius: CommonProperties.geom.defaultRadius
 
             property int hiddenImplicitHeight: 2*root.margins +
                                              implicitBannerHeight
@@ -189,7 +189,7 @@ Item {
             width: flip.width
             height: flip.height
             color: root.backgroundColor
-            radius: CommonProperties.geom.cardRadius
+            radius: CommonProperties.geom.defaultRadius
 
             implicitWidth: 2*root.margins +
                            Math.max(contentItemWrapper.implicitWidth,

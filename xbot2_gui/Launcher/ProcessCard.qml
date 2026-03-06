@@ -25,7 +25,7 @@ Item {
 
     // private
     property var colorMap: {
-        'Running':  Qt.lighter(CommonProperties.colors.ok),
+        'Running':  CommonProperties.colors.ok,
         'Stopped': card.defaultBackground,
         'Killed': CommonProperties.colors.err,
         'Waiting': Qt.lighter(CommonProperties.colors.ok, 3),
@@ -56,8 +56,8 @@ Item {
 
         // color management
         backgroundColor: colorMap[processState]
-        borderWidth: 2
-        borderColor: processKilled ? Qt.darker(backgroundColor) : Qt.lighter(backgroundColor)
+        // borderWidth: 2
+        // borderColor: processKilled ? Qt.darker(backgroundColor) : Qt.lighter(backgroundColor)
 
 
 
@@ -108,17 +108,17 @@ Item {
             columns: 2
             height: implicitHeight
             anchors.fill: parent
-            Button {
+            RstButton {
                 text: root.processRunning ? 'Stop' : 'Start'
                 onClicked: root.processRunning ? root.stop() : root.start()
                 Layout.fillWidth: true
             }
-            Button {
+            RstButton {
                 text: 'Kill'
                 onClicked: root.kill()
                 Layout.fillWidth: true
             }
-            Switch {
+            RstSwitch {
                 Layout.columnSpan: 2
 
                 id: muteSwitch

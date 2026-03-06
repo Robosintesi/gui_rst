@@ -12,5 +12,5 @@ TwoSideBarForm {
 
     bar.x: type === TwoSideBar.Type.Bar ? Logic.xOffset() : Logic.normalize(value) * width - bar.width/2
     bar.width: type === TwoSideBar.Type.Bar ? Logic.width() : refMarker.width/2
-    refMarker.x: Logic.normalize(valueRef) * width - refMarker.width/2
+    // refMarker.x: Logic.normalize(valueRef) * width - refMarker.width/2
 }

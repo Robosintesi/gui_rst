@@ -41,6 +41,20 @@ Item {
     property string volumeOff: '\ue04f'
     property string copy: '\ue14d'
     property string clean: '\uf0ff'
+    property string refresh: '\ue5d5'
+    property string visibility: '\ue8f4'
+    property string collapseAll: '\ue944'
+    property string apps: '\ue5c3'
+    property string more: '\ue5d3'
+    property string splitHorz: '\uf674'
+    property string splitVert: '\uf676'
+    property string close: '\ue5cd'
+    property string wifiConnected: '\ue63e'
+    property string wifiDisconnected: '\ue648'
+    property string networkSettings: '\ueb31'
+    property string advancedSettings: '\ue869'
+    property string goBack: '\ue166'// '\ue5d8'
+    property string robotArm: '\uf049'
 
     property FontLoader filledFont: FontLoader {
         source: `/Font/materialsymbols/MaterialSymbolsOutlined[opsz,wght,FILL,GRAD@20,200,1,200].otf`

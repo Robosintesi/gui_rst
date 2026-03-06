@@ -25,7 +25,7 @@ Card1 {
 
     id: root
 
-    name: 'Custom command'
+    name: 'custom command'
     nameFont.pixelSize: CommonProperties.font.h3
 
     collapsable: false
@@ -36,8 +36,8 @@ Card1 {
 
     toolButtons: [
 
-        Button {
-            text: 'Submit'
+        RstButton {
+            text: 'submit'
             onClicked: popup.open()
         }
 

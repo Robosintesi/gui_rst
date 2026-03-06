@@ -4,6 +4,10 @@ set_source_files_properties(CommonProperties.qml PROPERTIES
     QT_QML_SINGLETON_TYPE TRUE
 )
 
+set_source_files_properties(Robosintesi.qml PROPERTIES
+    QT_QML_SINGLETON_TYPE TRUE
+)
+
 qt_add_qml_module(xbot2_gui_common
     URI Common
     VERSION 1.0
@@ -30,7 +34,24 @@ qt_add_qml_module(xbot2_gui_common
     DelayButtonRound.qml
     DoubleSpinBox1.qml
     MultiColumnLayout1.qml
-    QML_FILES LoadingPage.qml
+    LoadingPage.qml
+    # RecursiveSplitView.qml
+    # RecursiveSplitView.js
+    Robosintesi.qml
+    RstIconButton.qml
+    RstButton.qml
+
+    RESOURCES
+        icons/Ideogramma-Robosintesi-Cool-Gray.svg
+        icons/Ideogramma-Robosintesi-Black.svg
+        icons/Ideogramma-Robosintesi-Blu.svg
+        icons/Logotipo-Robosintesi-Black.svg
+        icons/Logotipo-Robosintesi-Blu.svg
+        icons/Logotipo-Robosintesi-Cool-Gray.svg
+        QML_FILES RstSwitch.qml
+        QML_FILES RstCheckBox.qml
+        QML_FILES RstProgressBar.qml
+        QML_FILES RstSlider.qml
 )
 
 target_link_libraries(xbot2_gui PRIVATE xbot2_gui_commonplugin)

@@ -90,9 +90,9 @@ Control {
             clip: true
         }
 
-        Button {
+        RstButton {
             Layout.alignment: Qt.AlignRight
-            text: 'Dismiss'
+            text: 'dismiss'
             onClicked: {
                 root.dismissRequested()
             }

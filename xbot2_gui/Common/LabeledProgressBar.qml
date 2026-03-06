@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 
-ProgressBar {
+RstProgressBar {
 
     // public
     property alias text: label.text

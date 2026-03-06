@@ -16,35 +16,85 @@ ApplicationWindow {
     width: 1280
     height: 720
     visible: true
+    color: Robosintesi.colors.background
     title: "Xbot2 Robot GUI"
     visibility: Qt.platform.os === "android" ? Window.FullScreen : Window.AutomaticVisibility
     property bool dbg: true
 
+    font.family: CommonProperties.robosintesiFont.headline.font.family
+
     palette {
         active {
-            highlight: Material.primary
-            highlightedText: Material.foreground
-            buttonText: Material.foreground
-            text: Material.foreground
-            accent: Material.accent
-            window: Material.background
+            highlight: Robosintesi.colors.text
+            highlightedText: Robosintesi.colors.background
+            buttonText: Robosintesi.colors.text
+            text: Robosintesi.colors.foreground
+            accent: Robosintesi.colors.text
+            window: Robosintesi.colors.background
         }
-        inactive{
-            highlight: Material.primary
-            highlightedText: Material.foreground
-            buttonText: Material.foreground
-            text: Material.foreground
-            accent: Material.accent
-            window: Material.background
+        inactive {
+            highlight: Robosintesi.colors.text
+            highlightedText: Robosintesi.colors.background
+            buttonText: Robosintesi.colors.text
+            text: Robosintesi.colors.foreground
+            accent: Robosintesi.colors.text
+            window: Robosintesi.colors.background
         }
         disabled {
-            window: Qt.lighter(Material.background)
-            buttonText: Material.foreground
+            window: Qt.lighter(Robosintesi.colors.background)
+            buttonText: Robosintesi.colors.text
         }
     }
 
     Component.onCompleted: {
         appData.keepScreenOn(true)
+    }
+
+    header: ToolBar {
+        id: header
+        height: 120
+        width: parent.width
+
+        background: Rectangle {
+            color: Robosintesi.colors.background
+        }
+
+        Image {
+            id: headerLogo
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: parent.top
+            anchors.topMargin: CommonProperties.geom.margins
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: CommonProperties.geom.margins
+            autoTransform: true
+            fillMode: Image.PreserveAspectFit
+            source: Robosintesi.icons.logotipoCoolGray
+        }
+    }
+
+    footer: ToolBar {
+        // sourceComponent: isAppRunning ? appFooter : bootFooter
+        id: footer
+        height: 120
+        width: parent.width
+
+        background: Rectangle {
+            color: Robosintesi.colors.background
+        }
+
+        Image {
+            id: footerLogo
+            anchors.right: parent.right
+            anchors.rightMargin: CommonProperties.geom.margins
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            anchors.topMargin: CommonProperties.geom.margins
+            anchors.bottomMargin: CommonProperties.geom.margins
+            autoTransform: true
+            // width: 40; height: 40
+            fillMode: Image.PreserveAspectFit
+            source: Robosintesi.icons.ideogrammaCoolGray
+        }
     }
 
     // MouseArea {
@@ -125,6 +175,14 @@ ApplicationWindow {
             active: true
         }
 
+        // PageItem {
+        //     name: "Anime"
+        //     page: "/qt/qml/Anime/Anime.qml"
+        //     iconText: MaterialSymbolNames.robotArm
+        //     iconFont: syms.font.family
+        //     active: true
+        // }
+
         PageItem {
             name: "Process"
             page: "/qt/qml/Launcher/Launcher.qml"
@@ -155,8 +213,8 @@ ApplicationWindow {
             page: "/qt/qml/TestThings/Playground2.qml"
             iconText: MaterialSymbolNames.playground
             iconFont: syms.font.family
-            active: true
-            show: CommonProperties.config.testing
+            active: false
+            show: false //CommonProperties.config.testing
         }
 
         PageItem {
@@ -164,7 +222,9 @@ ApplicationWindow {
             page: "/qt/qml/Joy/Joy.qml"
             iconText: MaterialSymbolNames.joystick
             iconFont: syms.font.family
-            active: client.robotConnected || mainWindow.dbg
+            active: false //client.robotConnected || mainWindow.dbg
+            visible: false
+            show: false
         }
 
         PageItem {
@@ -174,7 +234,8 @@ ApplicationWindow {
             iconFont: syms.font.family
             active: client.robotConnected || mainWindow.dbg || true
             sizeFactor: 1.1
-            show: requestedPages.indexOf(name) > -1
+            show: false // requestedPages.indexOf(name) > -1
+            visible: false
         }
 
         PageItem {
@@ -191,8 +252,9 @@ ApplicationWindow {
             page: "/qt/qml/TestThings/Playground.qml"
             iconText: MaterialSymbolNames.playground
             iconFont: syms.font.family
-            active: true
-            visible: true
+            active: false
+            visible: false
+            show: false
         }
 
         PageItem {
