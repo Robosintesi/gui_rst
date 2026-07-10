@@ -20,6 +20,7 @@ Rectangle {
     property alias robotState: robotState
     property alias robotCmd: robotCmd
     property alias showRobotCmd: showCmdChk.checked
+    property bool showCommand: true
 
     signal jointClicked(string jointName)
 
@@ -64,9 +65,17 @@ Rectangle {
                 Layout.preferredHeight: 40
                 // Layout.columnSpan: 2
                 text: 'show command robot'
+                visible: false
+            }
+            RstCheckBox {
+                id: showEnvironmentChk
+                Layout.fillWidth: true
+                Layout.preferredHeight: 40
+                text: 'show environment'
+                checked: true
             }
             RstButton {
-                text: 'Reset view'
+                text: 'reset view'
                 onClicked: root.resetView()
                 Layout.fillWidth: true
             }
@@ -144,6 +153,15 @@ Rectangle {
                 color: Robosintesi.colors.accent
                 opacity: 0.75
                 visible: showCmdChk.checked
+            }
+
+            EnvironmentNode {
+                id: environmentNode
+                client: root.client
+                eulerRotation.x: -90
+                color: Qt.rgba(0.6, 0.6, 0.6, 1.0)
+                alpha: 1
+                visible: showEnvironmentChk.checked
             }
 
         }

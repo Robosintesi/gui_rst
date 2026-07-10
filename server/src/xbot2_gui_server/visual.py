@@ -32,6 +32,17 @@ class VisualHandler:
 
         # config
         self.rate = config.get('rate', 10.0)
+        
+        # Colori configurabili per environment
+        self.environment_colors = config.get('environment_colors', {
+            'world': [0.5, 0.5, 0.5],    # grigio scuro (muri)
+            'table': [0.8, 0.6, 0.4],   # marrone (tavolo)
+            'fluent': [0.2, 0.4, 0.8],  # blu scuro (tecan fluent)
+            'spark': [0.2, 0.4, 0.8],   # blu scuro (tecan spark)
+            'rack': [0.6, 0.8, 0.6],    # verde (rack)
+            'cap': [0.2, 0.2, 0.2],     # blu elettrico (cap box/station)
+        })
+        self.default_color = config.get('default_environment_color', [0.7, 0.7, 0.7])
 
         # save server object, register our handlers
         self.srv = srv
@@ -43,6 +54,10 @@ class VisualHandler:
         self.srv.add_route('GET', '/visual/get_mesh_entities',
                            self.visual_get_mesh_entities,
                            'visual_get_mesh_entities')
+        
+        self.srv.add_route('GET', '/visual/get_environment_entities',
+                           self.visual_get_environment_entities,
+                           'visual_get_environment_entities')
 
         # self.srv.add_route('GET', '/visual/get_mesh_tfs',
         #                    self.visual_get_mesh_tfs,
@@ -214,6 +229,154 @@ class VisualHandler:
         print('URI/PATH: ', uri, path)
         return web.FileResponse(path)
 
+    @utils.handle_exceptions
+    async def visual_get_environment_entities(self, request):
+        """
+        Estrae elementi statici dell'environment dal URDF.
+        Cerca link con joint fixed che non fanno parte della catena cinematica del robot.
+        """
+        # parse urdf
+        urdf = ros_handle.get_urdf()
+        urdf = urdf.replace('<texture/>', '')
+        model = urdf_parser.Robot.from_xml_string(urdf)
+
+        # Funzione per calcolare trasformazione da world a un link
+        def get_transform_to_world(link_name):
+            transforms = []
+            current = link_name
+            
+            while current != 'world':
+                parent_joint = None
+                for joint in model.joints:
+                    if joint.child == current:
+                        parent_joint = joint
+                        break
+                
+                if parent_joint is None:
+                    break
+                    
+                if parent_joint.origin:
+                    transforms.append((list(parent_joint.origin.xyz), list(parent_joint.origin.rpy)))
+                else:
+                    transforms.append(([0, 0, 0], [0, 0, 0]))
+                    
+                current = parent_joint.parent
+            
+            if not transforms:
+                return [0, 0, 0], R.from_euler('xyz', [0, 0, 0])
+                
+            transforms.reverse()
+            cumulative_xyz = [0, 0, 0]
+            cumulative_rot = R.from_euler('xyz', [0, 0, 0])
+            
+            for t_xyz, t_rpy in transforms:
+                rotated_xyz = cumulative_rot.apply(t_xyz)
+                cumulative_xyz = [cumulative_xyz[i] + rotated_xyz[i] for i in range(3)]
+                cumulative_rot = cumulative_rot * R.from_euler('xyz', t_rpy)
+            
+            return cumulative_xyz, cumulative_rot
+        
+        # Calcola trasformazione da world a base_link
+        robot_xyz, robot_rot = get_transform_to_world('base_link')
+
+        # Identifica link dell'environment: quelli collegati direttamente a 'world' tramite joint fixed
+        environment_links = set()
+        for jname, joint in model.joint_map.items():
+            if joint.parent == 'world' and joint.type == 'fixed':
+                environment_links.add(joint.child)
+        
+        # Trova tutti i link collegati agli environment_links tramite joint fixed
+        changed = True
+        while changed:
+            changed = False
+            for jname, joint in model.joint_map.items():
+                if joint.type == 'fixed':
+                    if joint.parent in environment_links and joint.child not in environment_links:
+                        environment_links.add(joint.child)
+                        changed = True
+
+        # Estrae elementi environment
+        env_entities = dict()
+        
+        for lname, link in model.link_map.items():
+            if lname not in environment_links:
+                continue
+                
+            geometries = link.visuals if link.visuals else (link.collisions if link.collision else [])
+            
+            if not geometries:
+                continue
+            
+            # Calcola trasformazione da world a questo link
+            link_xyz, link_rot = get_transform_to_world(lname)
+            
+            # Processa ogni geometria del link
+            for idx, geom_elem in enumerate(geometries):
+                local_xyz = list(geom_elem.origin.xyz) if geom_elem.origin else [0, 0, 0]
+                local_rpy = list(geom_elem.origin.rpy) if geom_elem.origin else [0, 0, 0]
+                
+                # Combina trasformazione link + geometria (in world frame)
+                local_xyz_rotated = link_rot.apply(local_xyz)
+                final_xyz_world = [link_xyz[i] + local_xyz_rotated[i] for i in range(3)]
+                final_rot_world = link_rot * R.from_euler('xyz', local_rpy)
+                
+                # Converti da world frame a base_link frame
+                relative_xyz = [final_xyz_world[i] - robot_xyz[i] for i in range(3)]
+                relative_xyz = robot_rot.inv().apply(relative_xyz).tolist()
+                relative_rot = robot_rot.inv() * final_rot_world
+                
+                # Assegna colore basato sulla configurazione
+                def get_color_for_entity(name):
+                    for key, color in self.environment_colors.items():
+                        if key in name:
+                            return color
+                    return self.default_color
+                
+                origin = {
+                    'origin_xyz': relative_xyz,
+                    'origin_rot': relative_rot.as_quat().tolist(),
+                    'color': get_color_for_entity(lname)
+                }
+                
+                entity_name = f"{lname}_{idx}" if len(geometries) > 1 else lname
+                print(f"Environment entity saved: {entity_name}")
+                
+                if isinstance(geom_elem.geometry, urdf_parser.Mesh):
+                    env_entities[entity_name] = {
+                        **origin,
+                        'type': 'MESH',
+                        'filename': geom_elem.geometry.filename,
+                        'scale': list(geom_elem.geometry.scale) if geom_elem.geometry.scale else [1, 1, 1],
+                    }
+                elif isinstance(geom_elem.geometry, urdf_parser.Box):
+                    env_entities[entity_name] = {
+                        **origin,
+                        'type': 'BOX',
+                        'filename': '#BOX',
+                        'size': [geom_elem.geometry.size[0]*1000,
+                                geom_elem.geometry.size[1]*1000,
+                                geom_elem.geometry.size[2]*1000],
+                        'scale': [0.001, 0.001, 0.001]
+                    }
+                elif isinstance(geom_elem.geometry, urdf_parser.Cylinder):
+                    env_entities[entity_name] = {
+                        **origin,
+                        'type': 'CYLINDER',
+                        'filename': '#CYLINDER',
+                        'radius': geom_elem.geometry.radius*1000,
+                        'length': geom_elem.geometry.length*1000,
+                        'scale': [0.001, 0.001, 0.001]
+                    }
+                elif isinstance(geom_elem.geometry, urdf_parser.Sphere):
+                    env_entities[entity_name] = {
+                        **origin,
+                        'type': 'SPHERE',
+                        'filename': '#SPHERE',
+                        'radius': geom_elem.geometry.radius*1000,
+                        'scale': [0.001, 0.001, 0.001]
+                    }
+        
+        return web.json_response(env_entities)
     
     @utils.handle_exceptions
     async def visual_get_mesh_entities(self, request):
