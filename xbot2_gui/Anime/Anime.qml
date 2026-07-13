@@ -19,6 +19,8 @@ MultiPaneResponsiveLayout {
     enabled: client.robotConnected
     property bool isCurrentPage
     property bool isAppRunning: false
+    property bool missionRunning: false
+    property bool missionPaused: false
 
     id: root
 
@@ -80,9 +82,9 @@ MultiPaneResponsiveLayout {
                         font.pixelSize: 40
                         font.letterSpacing: 2
                         font.bold: true
-                        enabled: isAppRunning
-                        opacity: isAppRunning ? 1 : 0.5
-                        onClicked: scenarioPopup.open()
+                        enabled: !root.missionRunning
+                        opacity: enabled ? 1 : 0.5
+                        onClicked: Logic.startMission()
                     }
 
                     RstButton {
@@ -90,13 +92,40 @@ MultiPaneResponsiveLayout {
                         Layout.preferredWidth: 250
                         Layout.preferredHeight: 80
                         Layout.alignment: Qt.AlignHCenter
-                        text: "pause"
+                        text: root.missionPaused ? "resume" : "pause"
                         font.pixelSize: 40
                         font.letterSpacing: 2
                         font.bold: true
-                        enabled: !isAppRunning
-                        opacity: !isAppRunning ? 1 : 0.5
-                        // textColor: CommonProperties.colors.warn
+                        enabled: root.missionRunning
+                        opacity: enabled ? 1 : 0.5
+                        onClicked: Logic.setMissionPaused(!root.missionPaused)
+
+                        // catppuccin macchiato green
+                        readonly property color pausedGreen: "#a6da95"
+                        readonly property color defaultTextColor: Robosintesi.colors.background
+
+                        SequentialAnimation {
+                            running: root.missionPaused
+                            loops: Animation.Infinite
+
+                            onStopped: pauseMission.textColor = pauseMission.defaultTextColor
+
+                            ColorAnimation {
+                                target: pauseMission
+                                property: "textColor"
+                                to: pauseMission.pausedGreen
+                                duration: 700
+                                easing.type: Easing.InOutQuad
+                            }
+
+                            ColorAnimation {
+                                target: pauseMission
+                                property: "textColor"
+                                to: pauseMission.defaultTextColor
+                                duration: 700
+                                easing.type: Easing.InOutQuad
+                            }
+                        }
                     }
 
                     RstButton {
@@ -108,9 +137,10 @@ MultiPaneResponsiveLayout {
                         font.pixelSize: 40
                         font.letterSpacing: 2
                         font.bold: true
-                        enabled: !isAppRunning
-                        opacity: !isAppRunning ? 1 : 0.5
+                        enabled: root.missionRunning
+                        opacity: enabled ? 1 : 0.5
                         // textColor: CommonProperties.colors.err
+                        onClicked: Logic.stopMission()
                     }
                 }
             }
