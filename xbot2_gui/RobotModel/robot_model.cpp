@@ -27,6 +27,8 @@ public:
 
 private:
 
+    bool inBaseLinkSubtree(const std::string& link_name) const;
+
     RigidBodyDynamics::Model _model;
     Eigen::VectorXd _qeig;
     std::shared_ptr<urdf::UrdfModel> _urdf;
@@ -97,20 +99,42 @@ Pose RobotModel::Impl::getPose(QString frame)
         return Pose();
     }
 
-    auto pos = RigidBodyDynamics::CalcBodyToBaseCoordinates(
+    Eigen::Vector3d pos = RigidBodyDynamics::CalcBodyToBaseCoordinates(
                 _model,
                 _qeig,
                 bid,
                 Eigen::Vector3d::Zero(),
                 false);
 
-    auto rot = RigidBodyDynamics::CalcBodyWorldOrientation(
+    Eigen::Matrix3d rot = RigidBodyDynamics::CalcBodyWorldOrientation(
                 _model,
                 _qeig,
                 bid,
-                false);
+                false).transpose();
 
-    Eigen::Quaterniond rot_q_eig(rot.transpose());
+    auto base_bid = _model.GetBodyId("base_link");
+
+    if(base_bid != std::numeric_limits<uint>::max() &&
+            !inBaseLinkSubtree(frame.toStdString()))
+    {
+        Eigen::Vector3d base_pos = RigidBodyDynamics::CalcBodyToBaseCoordinates(
+                    _model,
+                    _qeig,
+                    base_bid,
+                    Eigen::Vector3d::Zero(),
+                    false);
+
+        Eigen::Matrix3d base_rot = RigidBodyDynamics::CalcBodyWorldOrientation(
+                    _model,
+                    _qeig,
+                    base_bid,
+                    false);
+
+        pos = base_rot * (pos - base_pos);
+        rot = base_rot * rot;
+    }
+
+    Eigen::Quaterniond rot_q_eig(rot);
 
     QList<qreal> qpos{pos.x(), pos.y(), pos.z()};
 
@@ -172,6 +196,25 @@ QList<QString> RobotModel::Impl::getJointNames()
     }
 
     return ret;
+}
+
+bool RobotModel::Impl::inBaseLinkSubtree(const std::string& link_name) const
+{
+    auto link = _urdf->getLink(link_name);
+
+    while(link && link->parent_joint)
+    {
+        const auto& parent_name = link->parent_joint->parent_link_name;
+
+        if(parent_name == "base_link")
+        {
+            return true;
+        }
+
+        link = _urdf->getLink(parent_name);
+    }
+
+    return false;
 }
 
 QString RobotModel::Impl::parentJointName(QString linkName) const
