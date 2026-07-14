@@ -1,3 +1,4 @@
 mission:
-  machine: localhost
-  cmd: bash -c 'source /opt/ros/jazzy/setup.bash && source /home/pelandrone/rst_ws/setup.bash && ros2 launch anime_bt run_mission.launch.xml robot:=true model_name:=pino_v2 gui:=false mission_name:=scenario0 stage:=CAPPING use_gripper:=false'
+  mode: ssh
+  machine: embedded@localhost
+  cmd: ros2 launch anime_bt run_mission.launch.xml robot:=true model_name:=inail2arm gui:=false mission_name:=scenario0 stage:=CAPPING use_gripper:=false disable_collision:=true

@@ -13,6 +13,7 @@ from std_msgs.msg import Bool
 
 from .server import ServerBase
 from .screen_session import Process
+from .ssh_process import SshProcess
 from . import utils
 
 
@@ -39,10 +40,21 @@ class MissionHandler:
             raise KeyError(f'process "{proc_name}" not found in {launcher_cfg_path}')
         self.machine = proc_cfg.get('machine', 'localhost')
 
-        # mission process: tmux session over ssh on the target machine
-        self.proc = Process(name=proc_name,
-                            cmd=proc_cfg['cmd'],
-                            machine=self.machine)
+        # mission process on the target machine; 'tmux' runs it in a
+        # tmux session over ssh (survives server restarts, requires tmux
+        # on the target), 'ssh' runs it inside a plain ssh connection
+        # held by this server (no tmux needed, dies with the server)
+        mode = proc_cfg.get('mode', config.get('mode', 'tmux'))
+        if mode == 'ssh':
+            self.proc = SshProcess(name=proc_name,
+                                   cmd=proc_cfg['cmd'],
+                                   machine=self.machine)
+        elif mode == 'tmux':
+            self.proc = Process(name=proc_name,
+                                cmd=proc_cfg['cmd'],
+                                machine=self.machine)
+        else:
+            raise ValueError(f'invalid mission mode "{mode}" (use "tmux" or "ssh")')
 
         # paused state, kept in sync with the executor's latched topic
         self.paused = False
