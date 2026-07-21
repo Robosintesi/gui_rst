@@ -1,3 +1,11 @@
+context:
+  session: anime
+
 mission:
-  machine: localhost
-  cmd: bash -c 'source /opt/ros/jazzy/setup.bash && source /home/pelandrone/rst_ws/setup.bash && ros2 launch anime_bt run_mission.launch.xml robot:=true model_name:=pino_v2 gui:=false mission_name:=scenario0 stage:=CAPPING use_gripper:=false'
+  # Source ROS? source /opt/ros/jazzy/setup.bash
+  cmd: ros2 launch anime_bt run_mission.launch.xml robot:=true model_name:=pino_v2 gui:=false mission_name:=scenario0 use_gripper:=false stage:=CAPPING
+
+
+  machine: local
+  # machine: user@10.24.x.x
+  # docker: noble-ros2-dev-1

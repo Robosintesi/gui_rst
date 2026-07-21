@@ -13,43 +13,50 @@ function jsCallback(js) {
 
 function objCallback(obj) {
 
-    if(obj.type === 'mission_status') {
-        root.missionRunning = obj.running
-        root.missionPaused = obj.paused
+    if(obj.type === 'proc_status' && obj.name === missionProcess) {
+        root.missionRunning = obj.status === 'Running'
+        if(!root.missionRunning) {
+            root.missionPaused = false
+        }
     }
+    // pause/resume is mission specific, and is served by the mission handler
+    else if(obj.type === 'mission_status') {
+        root.missionPaused = root.missionRunning && obj.paused
+    }
+}
+
+
+const missionProcess = 'mission'
+
+function missionCmd(cmd, onSuccess) {
+
+    client.doRequest('PUT',
+                     '/process/' + missionProcess + '/command/' + cmd,
+                     '',
+                     (msg) =>
+                     {
+                         if(msg.success) {
+                             onSuccess()
+                         }
+                         else {
+                             error(msg.message, 'mission')
+                         }
+                     })
 }
 
 
 function startMission() {
 
-    client.doRequest('POST', '/mission/start',
-                     '',
-                     (msg) =>
-                     {
-                         if(msg.success) {
-                             root.missionRunning = true
-                         }
-                         else {
-                             error(msg.message, 'mission')
-                         }
-                     })
+    missionCmd('start', () => { root.missionRunning = true })
 }
 
 
 function stopMission() {
 
-    client.doRequest('POST', '/mission/stop',
-                     '',
-                     (msg) =>
-                     {
-                         if(msg.success) {
-                             root.missionRunning = false
-                             root.missionPaused = false
-                         }
-                         else {
-                             error(msg.message, 'mission')
-                         }
-                     })
+    missionCmd('stop', () => {
+        root.missionRunning = false
+        root.missionPaused = false
+    })
 }
 
 

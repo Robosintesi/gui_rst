@@ -7,8 +7,8 @@ import time
 import os
 from typing import List
 
-# from concert_launcher import executor as exe
-# from concert_launcher import remote
+from concert_launcher import executor as exe
+from concert_launcher import remote
 
 from .server import ServerBase
 from . import utils
@@ -18,7 +18,7 @@ from .proto import generic_pb2, process_output_pb2
 class Launcher:
 
     def __init__(self, srv: ServerBase, config=dict()) -> None:
-        
+
         launcher_cfg_path = config.get('launcher_config')
         
         self.cfg = None
