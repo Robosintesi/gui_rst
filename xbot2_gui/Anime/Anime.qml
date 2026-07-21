@@ -5,8 +5,6 @@ import QtQuick.Layouts
 import Font
 import Common
 import Main
-import Monitoring.BarPlot
-import Monitoring.SingleJointState
 import ViewerQuick3D
 
 import "Anime.js" as Logic
@@ -172,19 +170,6 @@ MultiPaneResponsiveLayout {
                 client: root.client
                 color: Qt.transparent
                 showCommand: false
-
-                onJointClicked: function(jointName) {
-                    jointState.selectJoint(jointName)
-
-                }
-
-                onSelectedJointsChanged: {
-                    barPlot.selectedJoints = selectedJoints
-                    jointCommand.ctrlJoints = selectedJoints
-                }
-
-                enableMultipleSelection: jointCommand.enableMultipleSelection
-
             }
 
         }
