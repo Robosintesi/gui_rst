@@ -62,8 +62,7 @@ class Process:
                 stderr=asyncio.subprocess.PIPE,
                 stdin=asyncio.subprocess.PIPE)
         
-        # give it 1 sec
-        retcode = await asyncio.wait_for(proc.wait(), 1.0)
+        retcode = await asyncio.wait_for(proc.wait(), 5.0)
         if retcode == 0:
             print(f'{self.name} session detected on {self.hostname}')
             asyncio.get_running_loop().create_task(self._keep_ssh_session_running())
@@ -110,8 +109,7 @@ class Process:
                 stderr=asyncio.subprocess.PIPE,
                 stdin=asyncio.subprocess.PIPE)
 
-        # give it 1 sec
-        retcode = await asyncio.wait_for(proc.wait(), 1.0)
+        retcode = await asyncio.wait_for(proc.wait(), 5.0)
         if retcode == 0:
             print(f'{self.name} session started on {self.hostname}')
             asyncio.get_running_loop().create_task(self._keep_ssh_session_running())
@@ -135,8 +133,7 @@ class Process:
                 stderr=asyncio.subprocess.PIPE,
                 stdin=asyncio.subprocess.PIPE)
         
-        # give it 1 sec
-        retcode = await asyncio.wait_for(proc.wait(), 1.0)
+        retcode = await asyncio.wait_for(proc.wait(), 5.0)
         if retcode == 0:
             print(f'[{self.name}] sent ctrl+c to target session')
             return True
@@ -158,8 +155,7 @@ class Process:
                 stderr=asyncio.subprocess.PIPE,
                 stdin=asyncio.subprocess.PIPE)
         
-        # give it 1 sec
-        retcode = await asyncio.wait_for(proc.wait(), 1.0)
+        retcode = await asyncio.wait_for(proc.wait(), 5.0)
         if retcode == 0:
             print(f'[{self.name}] sent ctrl+\\ to target session')
             return True
@@ -205,7 +201,10 @@ class Process:
                 line = await asyncio.wait_for(ssh_proc.stdout.readline(), 1.0)
             except asyncio.TimeoutError:
                 break
-        
+            if not line:
+                # eof: ssh died (unreachable host, auth failure, ...)
+                break
+
         print(f'[{self.name}] ssh session ready')
         return ssh_proc
     
@@ -248,6 +247,7 @@ class Process:
             retcode = await self.ssh_session.wait()
             self.ssh_session = None
             print(f'ssh session with {self.hostname} died with exit code {retcode}, restarting..')
+            await asyncio.sleep(3.0)
 
     
     async def _screen_session_running(self, name):
@@ -260,7 +260,7 @@ class Process:
                 pass #builtins.print(string)
 
             # make sure we have our ssh sesssion
-            if self.ssh_session is None:
+            if self.ssh_session is None or self.ssh_session.returncode is not None:
                 builtins.print(f'{self.name} ssh session offline')
                 return False
 
@@ -270,16 +270,20 @@ class Process:
                 await asyncio.wait_for(read_coro, timeout=0.1)
             except:
                 pass
-            
-            # send command
-            print(f'issue tmux has-session -t {self.name} over ssh..')
-            self.ssh_session.stdin.write(f'tmux has-session -t {self.name} 1>/dev/null 2>/dev/null;\necho $?\n'.encode())
-            await self.ssh_session.stdin.drain()
-            print('..done')
-            
-            line = (await self.ssh_session.stdout.readline()).decode().strip()
-            print(f'got line "{line}"')
-            
+
+            try:
+                # send command
+                print(f'issue tmux has-session -t {self.name} over ssh..')
+                self.ssh_session.stdin.write(f'tmux has-session -t {self.name} 1>/dev/null 2>/dev/null;\necho $?\n'.encode())
+                await self.ssh_session.stdin.drain()
+                print('..done')
+
+                line = (await self.ssh_session.stdout.readline()).decode().strip()
+                print(f'got line "{line}"')
+            except (ConnectionError, BrokenPipeError):
+                builtins.print(f'{self.name} ssh session broken')
+                return False
+
             return line == '0'
 
 

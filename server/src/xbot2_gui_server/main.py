@@ -99,6 +99,7 @@ def main():
             ('xbot2_gui_server.cartesian', 'CartesianHandler'),
             # ('xbot2_gui_server.speech', 'SpeechHandler'),
             ('xbot2_gui_server.visual', 'VisualHandler'),
+            ('xbot2_gui_server.mission', 'MissionHandler'),
             # ('xbot2_gui_server.concert', 'ConcertHandler'),
             ('xbot2_gui_server.ecat', 'EcatHandler'),
             ('xbot2_gui_server.horizon', 'HorizonHandler'),

@@ -62,6 +62,10 @@ function objCallback(obj) {
             handleFault(names[i], obj.fault[i])
         }
     }
+    else if(obj.type === 'mission_status') {
+        root.missionRunning = obj.running
+        root.missionPaused = obj.paused
+    }
 }
 
 
@@ -122,6 +126,55 @@ function addJointStatePoint(livePlot, msg) {
         livePlot.addPoint(seriesData, t, val)
 
     }
+}
+
+
+function startMission() {
+
+    client.doRequest('POST', '/mission/start',
+                     '',
+                     (msg) =>
+                     {
+                         if(msg.success) {
+                             root.missionRunning = true
+                         }
+                         else {
+                             error(msg.message, 'mission')
+                         }
+                     })
+}
+
+
+function stopMission() {
+
+    client.doRequest('POST', '/mission/stop',
+                     '',
+                     (msg) =>
+                     {
+                         if(msg.success) {
+                             root.missionRunning = false
+                             root.missionPaused = false
+                         }
+                         else {
+                             error(msg.message, 'mission')
+                         }
+                     })
+}
+
+
+function setMissionPaused(paused) {
+
+    client.doRequest('POST', '/mission/set_paused?paused=' + paused,
+                     '',
+                     (msg) =>
+                     {
+                         if(msg.success) {
+                             root.missionPaused = paused
+                         }
+                         else {
+                             error(msg.message, 'mission')
+                         }
+                     })
 }
 
 

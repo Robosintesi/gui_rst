@@ -1,0 +1,7 @@
+mission:
+  launcher_config: launcher_config.yaml
+  process: mission
+  pause_service: /tree_main/pause
+  paused_topic: /tree_main/paused
+  # mission status broadcast rate [Hz]
+  rate: 1.0
