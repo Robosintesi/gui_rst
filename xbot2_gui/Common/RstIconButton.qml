@@ -9,6 +9,10 @@ Button {
     property string iconText: ""
     property string iconFont: 'Material Symbols Outlined'
     property int iconSize: CommonProperties.font.h1
+    property color iconColor: Robosintesi.colors.background
+    property color backgroundColor: Robosintesi.colors.text
+    property color borderColor: "transparent"
+    property int borderWidth: 0
 
     anchors.margins: CommonProperties.geom.margins
     anchors.leftMargin: CommonProperties.geom.margins
@@ -19,17 +23,17 @@ Button {
     flat: true
 
     background: Rectangle {
-        color: Robosintesi.colors.text
+        color: rstIconButton.backgroundColor
         radius: CommonProperties.geom.defaultRadius
-        // border.color: Robosintesi.colors.text
-        border.width: 0
+        border.color: rstIconButton.borderColor
+        border.width: rstIconButton.borderWidth
     }
 
     contentItem: Label {
         text: rstIconButton.iconText
         font.family: rstIconButton.iconFont
         font.pixelSize: rstIconButton.iconSize
-        color: Robosintesi.colors.background
+        color: rstIconButton.iconColor
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
     }

@@ -10,6 +10,8 @@ qt_add_qml_module(xbot2_gui_viewerquick3d
     Axes3D.qml
     RobotModelViewer.qml
     RobotModelViewer.js
+    EnvironmentNode.qml
+    EnvironmentNode.js
     SOURCES
     meshgeometry.h
     meshgeometry.cpp

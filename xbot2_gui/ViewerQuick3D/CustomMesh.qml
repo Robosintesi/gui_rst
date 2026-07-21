@@ -21,6 +21,8 @@ Node {
 
     property real cylinderRadius
     property real cylinderLength
+    
+    property vector3d boxSize: Qt.vector3d(0, 0, 0)
 
     property string parentJointName
     property bool isSelected: false
@@ -79,13 +81,24 @@ Node {
 
             let meshMap = Object()
             meshMap['#CYLINDER'] = '#Cylinder'
+            meshMap['#BOX'] = '#Cube'
 
-            model.source =  meshMap[meshUri]
-            wrapperNode.eulerRotation.x = 90
-            wrapperNode.scale.x = root.cylinderRadius * 0.01 * 2
-            wrapperNode.scale.y = root.cylinderLength * 0.01
-            wrapperNode.scale.z = root.cylinderRadius * 0.01 * 2
-            wrapperNode.position.z = root.cylinderLength * 0.1 / 2
+            model.source = meshMap[meshUri]
+            
+            if(meshUri === '#CYLINDER') {
+                wrapperNode.eulerRotation.x = 90
+                wrapperNode.scale.x = root.cylinderRadius * 0.01 * 2
+                wrapperNode.scale.y = root.cylinderLength * 0.01
+                wrapperNode.scale.z = root.cylinderRadius * 0.01 * 2
+                wrapperNode.position.z = root.cylinderLength * 0.1 / 2
+            }
+            else if(meshUri === '#BOX') {
+                // #Cube: 100x100x100 unità
+                // boxSize in mm (come cylinderRadius/Length), converti con *0.01
+                wrapperNode.scale.x = root.boxSize.x * 0.01
+                wrapperNode.scale.y = root.boxSize.y * 0.01
+                wrapperNode.scale.z = root.boxSize.z * 0.01
+            }
 
         }
         else {

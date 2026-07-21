@@ -55,6 +55,8 @@ Item {
     property string advancedSettings: '\ue869'
     property string goBack: '\ue166'// '\ue5d8'
     property string robotArm: '\uf049'
+    property string info: '\ue88e'
+    property string play2: '\ue1c4'
 
     property FontLoader filledFont: FontLoader {
         source: `/Font/materialsymbols/MaterialSymbolsOutlined[opsz,wght,FILL,GRAD@20,200,1,200].otf`

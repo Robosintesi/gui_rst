@@ -60,6 +60,7 @@ qt_add_qml_module(xbot2_gui
     DeserializationWorker.js
     sharedData.js
     SharedData1.qml
+    mainRST.qml
 )
 
 target_compile_definitions(xbot2_gui
@@ -138,6 +139,7 @@ add_subdirectory(Video)
 
 add_subdirectory(ViewerQuick3D)
 
+add_subdirectory(Anime)
 
 # ws receiver
 #add_library(WebsocketReceiver STATIC websocket_receiver.cpp)

@@ -227,7 +227,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("appData", &appdata);
 
     // load main qml file
-    const QUrl url(QStringLiteral("qrc:/qt/qml/Main/main.qml"));
+    const QUrl url(QStringLiteral("qrc:/qt/qml/Main/mainRST.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl) {
         if (!obj && url == objUrl)
