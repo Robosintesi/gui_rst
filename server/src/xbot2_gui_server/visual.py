@@ -1,6 +1,7 @@
 import asyncio
 from aiohttp import web
 import json
+import urllib
 
 from urdf_parser_py import urdf as urdf_parser
 from scipy.spatial.transform import Rotation as R
@@ -207,7 +208,7 @@ class VisualHandler:
     @utils.handle_exceptions
     async def visual_get_mesh_handler(self, request):
         uri = request.match_info['uri']
-        uri = uri.replace('%2F', '/')
+        uri = urllib.parse.unquote(uri)
         print('uri', uri)
         path = ros_utils.resolve_ros_uri(uri)
         if path.startswith('file://'):
