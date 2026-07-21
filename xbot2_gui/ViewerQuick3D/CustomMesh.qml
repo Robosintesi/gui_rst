@@ -47,7 +47,7 @@ Node {
                 PrincipledMaterial {
                     id: material
                     baseColor: root.isSelected ?
-                                Qt.lighter(root.color, 1.7) :
+                                Qt.darker(root.color, 1.5) :
                                 root.color
                     metalness: 0
                     roughness: 0

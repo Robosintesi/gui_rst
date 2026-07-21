@@ -9,9 +9,9 @@ Item {
     property Item colors: Item {
         property color primary: Material.primaryColor
         property color accent: Material.accentColor
-        property color ok: Material.color(Material.Green, Material.Shade900)
-        property color warn: Material.color(Material.Yellow, Material.Shade900)
-        property color err: Material.color(Material.Red, Material.Shade300)
+        property color ok: "#59c9a5" // "#22AAA1"
+        property color warn: "#FC7753" // ff8e72
+        property color err: "#E63462" //"#F45B69"
         property color primaryText: Material.primaryTextColor
         property color secondaryText: Material.secondaryTextColor
         property color cardBackground: Qt.rgba(1, 1, 1, 0.075)
@@ -21,6 +21,7 @@ Item {
     property Item geom: Item {
         property int mobileBreakpoint: 576
         property int cardRadius: 4
+        property int defaultRadius: 16
         property int spacing: 8
         property int margins: compactLayout ? 16 : 24
         property bool compactLayout: false
@@ -90,6 +91,18 @@ Item {
         property string halt: '\uf256'
         property string gamepad: '\uf11b'
 
+    }
+
+    property Item robosintesiFont : Item {
+        id: robosintesiFont
+
+        readonly property FontLoader body: FontLoader {
+            source: "/Font/robosintesi-font/Inter_18pt-Regular.ttf"
+        }
+
+        readonly property FontLoader headline: FontLoader {
+            source: "/Font/robosintesi-font/SpaceGrotesk-Bold.ttf"
+        }
     }
 
     property Item globalLivePlot

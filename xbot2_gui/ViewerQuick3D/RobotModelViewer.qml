@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import QtQuick3D
 import QtQuick3D.Helpers
+import Qt5Compat.GraphicalEffects
 
 import Main
 import Common
@@ -12,6 +13,8 @@ import "RobotModelViewer.js" as Logic
 Rectangle {
 
     color: Qt.rgba(0.8, 0.8, 0.8, 1)
+    radius: CommonProperties.geom.defaultRadius
+    clip: true
 
     property ClientEndpoint client
     property alias robotState: robotState
@@ -48,21 +51,21 @@ Rectangle {
 
         contentItem: GridLayout {
             columns: 1
-            CheckBox {
+            RstCheckBox {
                 id: showAxesChk
                 Layout.fillWidth: true
                 Layout.preferredHeight: 40
                 // Layout.columnSpan: 2
-                text: 'Show axes'
+                text: 'show axes'
             }
-            CheckBox {
+            RstCheckBox {
                 id: showCmdChk
                 Layout.fillWidth: true
                 Layout.preferredHeight: 40
                 // Layout.columnSpan: 2
-                text: 'Show command robot'
+                text: 'show command robot'
             }
-            Button {
+            RstButton {
                 text: 'Reset view'
                 onClicked: root.resetView()
                 Layout.fillWidth: true
@@ -127,9 +130,9 @@ Rectangle {
                 id: robotState
                 client: root.client
                 eulerRotation.x: -90
-                y: 75
+                // y: 75
                 opacity: showAxesChk.checked ? 0.9 : 1
-                color: 'green'
+                color: Robosintesi.colors.text
                 axesVisible: showAxesChk.checked
             }
 
@@ -137,8 +140,9 @@ Rectangle {
                 id: robotCmd
                 client: root.client
                 eulerRotation.x: -90
-                y: 75
-                opacity: 0.5
+                // y: 75
+                color: Robosintesi.colors.accent
+                opacity: 0.75
                 visible: showCmdChk.checked
             }
 
@@ -149,9 +153,19 @@ Rectangle {
     View3D {
 
         anchors.fill: parent
+        anchors.margins: 0
         id: view3d
         importScene: standAloneScene
         camera: cameraPerspectiveTwo
+        layer.enabled: true
+        // rounded corner for the 3d view not sure if this is the best way to do it
+        layer.effect: OpacityMask {
+            maskSource: Rectangle {
+                width: view3d.width
+                height: view3d.height
+                radius: CommonProperties.geom.defaultRadius
+            }
+        }
 
         environment: SceneEnvironment {
                  backgroundMode: SceneEnvironment.Color

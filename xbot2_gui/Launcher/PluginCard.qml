@@ -31,9 +31,9 @@ Item {
 
     property var colorMap: {
         'Aborted': CommonProperties.colors.err,
-        'Starting': Qt.lighter(CommonProperties.colors.ok, 3),
+        'Starting': Qt.darker(CommonProperties.colors.ok, 1.5),
         'Stopping': CommonProperties.colors.err,
-        'Running': Qt.lighter(CommonProperties.colors.ok),
+        'Running': CommonProperties.colors.ok,
         'Initialized': card.defaultBackground,
         'Stopped': card.defaultBackground,
         '': card.defaultBackground
@@ -59,8 +59,8 @@ Item {
 
         // color management
         backgroundColor: colorMap[pluginState]
-        borderWidth: 2
-        borderColor: pluginState === 'Aborted' ? Qt.darker(backgroundColor) : Qt.lighter(backgroundColor)
+        // borderWidth: 2
+        // borderColor: pluginState === 'Aborted' ? Qt.darker(backgroundColor) : Qt.lighter(backgroundColor)
 
         SequentialAnimation on backgroundColor {
 
@@ -109,12 +109,12 @@ Item {
             RowLayout {
                 Layout.fillWidth: true
                 spacing: card.margins
-                Button {
+                RstButton {
                     Layout.fillWidth: true
                     text: root.pluginStoppable ? 'Stop' : 'Start'
                     onClicked: root.pluginStoppable ? root.stop() : root.start()
                 }
-                Button {
+                RstButton {
                     Layout.fillWidth: true
                     text: 'Abort'
                     onClicked: root.abort()

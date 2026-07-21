@@ -19,7 +19,7 @@ Card1 {
     collapsable: true
     collapsed: true
 
-    name: 'Network Statistics'
+    name: 'network statistics'
 
     frontItem: Control {
         topPadding: 6
@@ -37,12 +37,30 @@ Card1 {
     }
 
     toolButtons: [
-        Switch {
+        RstSwitch {
             id: showTotalSwitch
-            text: 'Show total'
+            text: qsTr("show total")
             checked: false
-        }
 
+        //     indicator: Rectangle {
+        //             implicitWidth: 48
+        //             implicitHeight: 26
+        //             x: showTotalSwitch.leftPadding
+        //             y: parent.height / 2 - height / 2
+        //             radius: 13
+        //             color: showTotalSwitch.checked ? "#17a81a" : "#ffffff"
+        //             border.color: showTotalSwitch.checked ? "#17a81a" : "#cccccc"
+
+        //             Rectangle {
+        //                 x: showTotalSwitch.checked ? parent.width - width : 0
+        //                 width: 26
+        //                 height: 26
+        //                 radius: 13
+        //                 color: showTotalSwitch.down ? "#cccccc" : "#ffffff"
+        //                 border.color: showTotalSwitch.checked ? (showTotalSwitch.down ? "#17a81a" : "#21be2b") : "#999999"
+        //             }
+        //         }
+        }
     ]
 
     Timer {

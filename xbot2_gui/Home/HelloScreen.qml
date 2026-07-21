@@ -112,7 +112,7 @@ MultiPaneResponsiveLayout {
             width: scroll.contentWidth
 
             SectionHeader {
-                text: `XBot2 GUI ${appData.version.join('.')}`
+                text: `robosintesi GUI ${appData.version.join('.')}`
                 SmallToolButton {
                     text: MaterialSymbolNames.settings
                     font.family: syms.font.family
@@ -139,7 +139,7 @@ MultiPaneResponsiveLayout {
 
     ColumnLayout {
 
-        property string iconText: 'Server log'
+        property string iconText: 'server log'
         property string iconChar: MaterialSymbolNames.log
 
         id: textCol
@@ -152,18 +152,17 @@ MultiPaneResponsiveLayout {
 
         Row {
 
-            CheckBox {
+            RstCheckBox {
                 id: verbosityCheck
-                text: 'Verbose'
+                text: 'verbose'
                 checked: false
             }
 
-            CheckBox {
+            RstCheckBox {
                 id: autoscrollCheck
-                text: 'Autoscroll'
+                text: 'autoscroll'
                 checked: true
             }
-
         }
 
         NotificationPopup {

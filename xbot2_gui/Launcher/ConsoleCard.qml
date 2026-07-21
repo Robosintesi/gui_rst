@@ -26,6 +26,7 @@ Item {
         required property string txt
         // required property color txtColor
         font.pixelSize: root.pixelSize
+        font.family: CommonProperties.robosintesiFont.body.font.family
         width: view.width
         wrapMode: Text.WrapAnywhere
         readOnly: true

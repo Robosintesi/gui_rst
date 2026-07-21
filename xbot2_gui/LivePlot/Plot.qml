@@ -62,13 +62,13 @@ MultiPaneResponsiveLayout {
                     id: rangeCol
                     spacing: 3
 
-                    Button {
+                    RstButton {
                         width: parent.width
                         text: 'Reset'
                         onClicked: livePlot.resetView()
                     }
 
-                    Button {
+                    RstButton {
                         text: 'Rebuild'
                         onClicked: livePlot.rebuild()
                         visible: false

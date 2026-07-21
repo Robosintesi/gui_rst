@@ -107,7 +107,7 @@ Item {
 
             background: Rectangle {
                 color: root.backgroundColor
-                radius: CommonProperties.geom.cardRadius
+                radius: CommonProperties.geom.defaultRadius
                 border.color: root.borderColor
                 border.width: root.borderWidth
             }
@@ -248,7 +248,7 @@ Item {
 
             background: Rectangle {
                 color: root.backgroundColor
-                radius: CommonProperties.geom.cardRadius
+                radius: CommonProperties.geom.defaultRadius
             }
 
             padding: root.margins

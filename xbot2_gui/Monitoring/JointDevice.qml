@@ -21,11 +21,11 @@ Card1 {
 
     configurable: false
 
-    name: 'Safety'
+    name: 'safety'
 
     toolButtons: [
-        Button {
-            text: jointActive ? 'Stop' : 'Restore'
+        RstButton {
+            text: jointActive ? 'stop' : 'restore'
             onClicked: root.setSafetyState(!jointActive)
         }
     ]
@@ -53,7 +53,7 @@ Card1 {
             enabled: jointActive
             ColumnLayout {
                 spacing: -6
-                CheckBox {
+                RstCheckBox {
                     id: filterCheck
                     text: 'Enabled'
                     checked: filterActive

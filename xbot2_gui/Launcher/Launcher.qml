@@ -50,8 +50,8 @@ MultiPaneResponsiveLayout {
 
                 iconText: dashboard.visible ? '\uf077' : '\uf078'
 
-                Button {
-                    text: 'Refresh'
+                RstButton {
+                    text: 'refresh'
                     onClicked: {
                         dashboard.refresh()
                     }
@@ -87,17 +87,17 @@ MultiPaneResponsiveLayout {
 
                 width: parent.width
 
-                text: 'Process launcher'
+                text: 'process launcher'
 
-                CheckBox {
+                RstCheckBox {
                     id: showAllChk
-                    text: 'Show All'
+                    text: 'show all'
                     checked: false
                     onCheckedChanged: Qt.callLater(processLayout.computeLayout)
                 }
 
-                Button {
-                    text: 'Refresh'
+                RstButton {
+                    text: 'refresh'
                     onClicked: Logic.requestProcessUpdate(processRepeater)
                 }
 
@@ -162,10 +162,10 @@ MultiPaneResponsiveLayout {
 
                 width: parent.width
 
-                text: 'Plugin launcher'
+                text: 'plugin launcher'
 
-                Button {
-                    text: 'Refresh'
+                RstButton {
+                    text: 'refresh'
                     onClicked: {
                         Logic.requestPluginUpdate(pluginRepeater)
                     }

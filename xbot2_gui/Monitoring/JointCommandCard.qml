@@ -103,7 +103,7 @@ Card1 {
             Layout.fillWidth: true
             Layout.columnSpan: 2
 
-            Slider {
+            RstSlider {
                 enabled: root.ctrlJoints.length > 0
                 Layout.fillWidth: true
                 id: slider
@@ -131,7 +131,7 @@ Card1 {
 
         }
 
-        Button {
+        RstButton {
             id: trjCmdBtn
             property bool running: false
             enabled: root.ctrlJoints.length > 0
@@ -164,7 +164,7 @@ Card1 {
             }
         }
 
-        Button {
+        RstButton {
             enabled: root.ctrlJoints.length > 0
             Layout.columnSpan: 1
             Layout.fillWidth: true
@@ -211,7 +211,7 @@ Card1 {
                 value: 5.0
             }
 
-            CheckBox {
+            RstCheckBox {
                 Layout.columnSpan: 2
                 id: multiJointChk
                 checked: false

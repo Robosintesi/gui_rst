@@ -18,7 +18,7 @@ Card1 {
 
     // private
     id: root
-    name: 'Server status'
+    name: 'server status'
     configurable: false
 
     function updateServerUrl() {
@@ -74,8 +74,8 @@ Card1 {
     }
 
     toolButtons: [
-        Button {
-            text: 'Reset'
+        RstButton {
+            text: 'reset'
             onClicked: {
                 client.doRequest('POST', '/restart', '')
                 delayedConnect.restart()
@@ -121,10 +121,10 @@ Card1 {
             }
         }
 
-        Button {
+        RstButton {
             Layout.alignment: Qt.AlignHCenter
             Layout.columnSpan: 2
-            text: 'Connect'
+            text: 'connect'
             onClicked: {
                 root.updateServerUrl()
             }
@@ -211,7 +211,7 @@ Card1 {
             if(client.isConnected) {
                 client.doRequestAsync('GET', '/version', '')
                 .then((res) => {
-                          versionText.text = res.version
+                          versionText.text = "robosintesi-gui-server 2.7.6" //res.version
                       })
                 .catch((err) => {})
             }
