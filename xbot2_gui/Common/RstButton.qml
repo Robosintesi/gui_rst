@@ -8,6 +8,8 @@ Button {
 
     property color backgroundColor: Robosintesi.colors.text
     property color textColor: Robosintesi.colors.background
+    property color borderColor: rstButton.textColor
+    property real borderWidth: 1
     property real radius: CommonProperties.geom.defaultRadius
 
     font.pixelSize: CommonProperties.font.h3
@@ -16,8 +18,8 @@ Button {
     background: Rectangle {
         color: rstButton.down ? Qt.darker(rstButton.backgroundColor, 1.2) : rstButton.backgroundColor
         radius: rstButton.radius
-        border.color: rstButton.backgroundColor
-        border.width: 1
+        border.color: rstButton.borderColor
+        border.width: rstButton.borderWidth
     }
 
     contentItem: Text {

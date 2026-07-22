@@ -137,7 +137,8 @@ MultiPaneResponsiveLayout {
                         font.bold: true
                         enabled: root.missionRunning
                         opacity: enabled ? 1 : 0.5
-                        // textColor: CommonProperties.colors.err
+                        borderWidth: 2
+                        textColor: enabled ? "#e78284" : Robosintesi.colors.background
                         onClicked: Logic.stopMission()
                     }
                 }
