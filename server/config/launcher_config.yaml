@@ -3,7 +3,7 @@ context:
 
 mission:
   # Source ROS? source /opt/ros/jazzy/setup.bash
-  cmd: ros2 launch anime_bt run_mission.launch.xml robot:=true model_name:=pino_v2 gui:=false mission_name:=scenario0 use_gripper:=false stage:=CAPPING
+  cmd: ros2 launch anime_bt run_mission.launch.xml robot:=true model_name:=pino_v2 gui:=false mission_name:=scenario0 use_gripper:=false stage:=UNCAPPING
 
 
   machine: local

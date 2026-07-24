@@ -17,12 +17,47 @@ function objCallback(obj) {
         root.missionRunning = obj.status === 'Running'
         if(!root.missionRunning) {
             root.missionPaused = false
+            clearProgress()
         }
     }
     // pause/resume is mission specific, and is served by the mission handler
     else if(obj.type === 'mission_status') {
         root.missionPaused = root.missionRunning && obj.paused
+        updateProgress(obj)
     }
+}
+
+function updateProgress(obj) {
+
+    if(!root.missionRunning) {
+        clearProgress()
+        return
+    }
+
+    if(obj.progress === undefined) {
+        return
+    }
+
+    const p = obj.progress
+    root.missionStage = p.stage ?? ''
+    root.missionStepPrevious = p.previous ?? ''
+    root.missionStepCurrent = p.current ?? ''
+    root.missionStepNext = p.next ?? ''
+    root.missionCycleLabel = p.cycle_label ?? ''
+    root.missionCycleIndex = p.cycle ?? -1
+    root.missionCycleCount = p.cycle_count ?? 0
+}
+
+
+function clearProgress() {
+
+    root.missionStage = ''
+    root.missionStepPrevious = ''
+    root.missionStepCurrent = ''
+    root.missionStepNext = ''
+    root.missionCycleLabel = ''
+    root.missionCycleIndex = -1
+    root.missionCycleCount = 0
 }
 
 

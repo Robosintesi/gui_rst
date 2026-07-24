@@ -7,7 +7,7 @@ from . import ros_utils
 ros_handle : ros_utils.RosWrapper = ros_utils.ros_handle
 
 from std_srvs.srv import SetBool
-from std_msgs.msg import Bool
+from std_msgs.msg import Bool, String
 
 from .server import ServerBase
 from . import utils
@@ -21,11 +21,16 @@ class MissionHandler:
         self.rate = config.get('rate', 1.0)
         self.pause_service = config.get('pause_service', '/tree_main/pause')
         self.paused_topic = config.get('paused_topic', '/tree_main/paused')
+        self.progress_topic = config.get('progress_topic', '/mission_progress')
 
         # paused state, kept in sync with the executor's latched topic
         self.paused = False
         self.paused_sub = ros_handle.create_subscription(
             Bool, self.paused_topic, self.on_paused_recv, 1, latch=True)
+
+        self.progress = None
+        self.progress_sub = ros_handle.create_subscription(
+            String, self.progress_topic, self.on_progress_recv, 1, latch=True)
 
         # save server object, register our handlers
         self.srv = srv
@@ -39,11 +44,23 @@ class MissionHandler:
         self.paused = msg.data
 
 
+    def on_progress_recv(self, msg: String):
+        try:
+            self.progress = json.loads(msg.data)
+        except ValueError as e:
+            print(f'[mission] bad progress payload: {e}')
+
+
     def mission_status(self):
-        return {
+        status = {
             'type': 'mission_status',
             'paused': self.paused,
         }
+
+        if self.progress is not None:
+            status['progress'] = self.progress
+
+        return status
 
 
     @utils.handle_exceptions

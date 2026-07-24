@@ -20,6 +20,14 @@ MultiPaneResponsiveLayout {
     property bool missionRunning: false
     property bool missionPaused: false
 
+    property string missionStage: ""
+    property string missionStepPrevious: ""
+    property string missionStepCurrent: ""
+    property string missionStepNext: ""
+    property string missionCycleLabel: ""
+    property int missionCycleIndex: -1
+    property int missionCycleCount: 0
+
     id: root
 
     LayoutClassHelper {
@@ -173,6 +181,23 @@ MultiPaneResponsiveLayout {
                 showCommand: false
             }
 
+        }
+
+        MissionProgress {
+            id: missionProgress
+
+            Layout.fillWidth: true
+            Layout.margins: CommonProperties.geom.margins
+            Layout.bottomMargin: CommonProperties.geom.margins
+
+            stageName: root.missionStage
+            previousStep: root.missionStepPrevious
+            currentStep: root.missionStepCurrent
+            nextStep: root.missionStepNext
+            cycleLabel: root.missionCycleLabel
+            cycleIndex: root.missionCycleIndex
+            cycleCount: root.missionCycleCount
+            active: root.missionRunning && !root.missionPaused
         }
 
     }

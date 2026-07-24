@@ -6,6 +6,7 @@ qt_add_qml_module(xbot2_gui_anime
     QML_FILES
     Anime.qml
     ScenarioPopup.qml
+    MissionProgress.qml
     QML_FILES Anime.js
 )
 
