@@ -11,12 +11,20 @@ Popup {
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
     anchors.centerIn: Overlay.overlay
     width: 400
-    height: 350
+    height: Math.min(520, Math.max(260, scenarioColumn.implicitHeight + 40))
 
-    property int selectedScenario: 1
+    property var scenarios: []
+
+    property int selectedIndex: -1
+    property bool missionRunning: false
     property bool showInfo: false
 
-    signal scenarioSelected(int scenario)
+    readonly property var selectedScenario:
+        (selectedIndex >= 0 && selectedIndex < scenarios.length) ? scenarios[selectedIndex] : undefined
+
+    signal scenarioSelected(var scenario)
+
+    onOpened: showInfo = false
 
     background: Rectangle {
         color: Robosintesi.colors.background
@@ -37,41 +45,42 @@ Popup {
             anchors.fill: parent
 
             ColumnLayout {
+                id: scenarioColumn
+                width: parent.width
                 anchors.centerIn: parent
                 spacing: 16
-                // Label {
-                //     text: "Select Scenario"
-                //     font.pixelSize: 24
-                //     font.bold: true
-                //     color: Robosintesi.colors.text
-                //     Layout.alignment: Qt.AlignHCenter
-                // }
+
+                Label {
+                    visible: popup.scenarios.length === 0
+                    Layout.fillWidth: true
+                    horizontalAlignment: Text.AlignHCenter
+                    wrapMode: Text.WordWrap
+                    color: Robosintesi.colors.text
+                    text: "No scenario defined in the launcher configuration"
+                }
 
                 Repeater {
-                    model: 4
-                    RowLayout {
+                    model: popup.scenarios
+
+                    ScenarioCard {
+                        required property int index
+                        required property var modelData
+
                         Layout.fillWidth: true
-                        spacing: 4
-                        
-                        RstButton {
-                            Layout.fillWidth: false
-                            Layout.preferredHeight: 50
-                            text: "run scenario " + (index + 1)
-                            onClicked: {
-                                popup.selectedScenario = index + 1
-                                popup.scenarioSelected(index + 1)
-                                popup.close()
-                            }
+
+                        label: modelData.label
+                        info: modelData.info
+                        running: popup.missionRunning
+
+                        onRunClicked: {
+                            popup.selectedIndex = index
+                            popup.scenarioSelected(modelData)
+                            popup.close()
                         }
-                        
-                        RstIconButton {
-                            iconText: MaterialSymbolNames.info
-                            backgroundColor: "transparent"
-                            iconColor: Robosintesi.colors.text
-                            onClicked: {
-                                popup.selectedScenario = index + 1
-                                popup.showInfo = true
-                            }
+
+                        onInfoClicked: {
+                            popup.selectedIndex = index
+                            popup.showInfo = true
                         }
                     }
                 }
@@ -91,7 +100,7 @@ Popup {
             spacing: 16
 
             Label {
-                text: "Scenario " + popup.selectedScenario + " Info"
+                text: popup.selectedScenario ? popup.selectedScenario.label : ""
                 font.pixelSize: 20
                 font.bold: true
                 color: Robosintesi.colors.text
@@ -99,14 +108,19 @@ Popup {
             }
 
             ScrollView {
+                id: infoScroll
+
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
+                contentWidth: availableWidth
+                ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+
                 Label {
-                    width: parent.width
+                    width: infoScroll.availableWidth
                     wrapMode: Text.WordWrap
                     color: Robosintesi.colors.text
-                    text: getScenarioInfo(popup.selectedScenario)
+                    text: popup.selectedScenario ? popup.selectedScenario.info : "No information available."
                 }
             }
 
@@ -136,16 +150,6 @@ Popup {
 
         transitions: Transition {
             NumberAnimation { target: rotation; property: "angle"; duration: 400 }
-        }
-    }
-
-function getScenarioInfo(scenario) {
-        switch(scenario) {
-            case 1: return "Scenario 1: brief description of the first scenario"
-            case 2: return "Scenario 2: brief description of the second scenario"
-            case 3: return "Scenario 3: brief description of the third scenario"
-            case 4: return "Scenario 4: brief description of the fourth scenario"
-            default: return "No information available."
         }
     }
 }

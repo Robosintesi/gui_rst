@@ -28,6 +28,12 @@ MultiPaneResponsiveLayout {
     property int missionCycleIndex: -1
     property int missionCycleCount: 0
 
+    property string missionProcess: "mission"
+    property string scenarioVariant: "scenario"
+
+    property var scenarios: []
+    property var selectedScenario: null
+
     id: root
 
     LayoutClassHelper {
@@ -90,7 +96,15 @@ MultiPaneResponsiveLayout {
                         font.bold: true
                         enabled: !root.missionRunning
                         opacity: enabled ? 1 : 0.5
-                        onClicked: Logic.startMission()
+
+                        onClicked: {
+                            if(root.scenarios.length > 0) {
+                                scenarioPopup.open()
+                            }
+                            else {
+                                Logic.startMission(null)
+                            }
+                        }
                     }
 
                     RstButton {
@@ -205,9 +219,14 @@ MultiPaneResponsiveLayout {
     ScenarioPopup {
         id: scenarioPopup
         parent: Overlay.overlay
+
+        scenarios: root.scenarios
+        missionRunning: root.missionRunning
+
+        onAboutToShow: Logic.loadScenarios()
+
         onScenarioSelected: function(scenario) {
-            console.log("Selected scenario:", scenario)
-            // Add logic to start mission with selected scenario
+            Logic.startMission(scenario)
         }
     }
 
@@ -221,6 +240,12 @@ MultiPaneResponsiveLayout {
 
         function onObjectReceived(obj) {
             Logic.objCallback(obj)
+        }
+    }
+
+    Component.onCompleted: {
+        if(client) {
+            Logic.loadScenarios()
         }
     }
 

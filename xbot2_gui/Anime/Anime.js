@@ -13,7 +13,7 @@ function jsCallback(js) {
 
 function objCallback(obj) {
 
-    if(obj.type === 'proc_status' && obj.name === missionProcess) {
+    if(obj.type === 'proc_status' && obj.name === root.missionProcess) {
         root.missionRunning = obj.status === 'Running'
         if(!root.missionRunning) {
             root.missionPaused = false
@@ -61,13 +61,28 @@ function clearProgress() {
 }
 
 
-const missionProcess = 'mission'
+function loadScenarios() {
 
-function missionCmd(cmd, onSuccess) {
+    client.doRequest('GET', '/mission/scenarios', '',
+                     (msg) =>
+                     {
+                         if(msg.success) {
+                             root.missionProcess = msg.process
+                             root.scenarioVariant = msg.variant
+                             root.scenarios = msg.scenarios
+                         }
+                         else {
+                             error(msg.message, 'mission')
+                         }
+                     })
+}
+
+
+function missionCmd(cmd, body, onSuccess) {
 
     client.doRequest('PUT',
-                     '/process/' + missionProcess + '/command/' + cmd,
-                     '',
+                     '/process/' + root.missionProcess + '/command/' + cmd,
+                     body,
                      (msg) =>
                      {
                          if(msg.success) {
@@ -80,15 +95,24 @@ function missionCmd(cmd, onSuccess) {
 }
 
 
-function startMission() {
+function startMission(scenario) {
 
-    missionCmd('start', () => { root.missionRunning = true })
+    let options = {}
+
+    if(scenario) {
+        options[root.scenarioVariant] = scenario.name
+    }
+
+    missionCmd('start', JSON.stringify({options: options}), () => {
+        root.selectedScenario = scenario ?? null
+        root.missionRunning = true
+    })
 }
 
 
 function stopMission() {
 
-    missionCmd('stop', () => {
+    missionCmd('stop', '', () => {
         root.missionRunning = false
         root.missionPaused = false
     })

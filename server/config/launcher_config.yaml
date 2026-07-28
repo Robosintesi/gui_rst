@@ -3,9 +3,28 @@ context:
 
 mission:
   # Source ROS? source /opt/ros/jazzy/setup.bash
-  cmd: ros2 launch anime_bt run_mission.launch.xml robot:=true model_name:=pino_v2 gui:=false mission_name:=scenario0 use_gripper:=false stage:=UNCAPPING
-
-
+  cmd: ros2 launch anime_bt run_mission.launch.xml robot:=true model_name:=pino_v2 gui:=false mission_name:=scenario0 use_gripper:=false
   machine: local
   # machine: user@10.24.x.x
   # docker: noble-ros2-dev-1
+
+  variants:
+    scenario:
+      - full_mission:
+          label: "Full Mission"
+          info: "Full Mission: run the complete mission, from rack collection to vial capping."
+
+      - capping:
+          label: "Capping"
+          info: "Capping: screw the caps back on all the vials of the rack."
+          cmd: "{cmd} stage:=CAPPING"
+
+      - uncapping:
+          label: "Uncapping"
+          info: "Uncapping: unscrew the caps of all the vials of the rack."
+          cmd: "{cmd} stage:=UNCAPPING"
+
+      - fluent:
+          label: "Fluent"
+          info: "Fluent: run the fluent stage only."
+          cmd: "{cmd} stage:=FLUENT"
