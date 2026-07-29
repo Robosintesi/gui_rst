@@ -36,11 +36,6 @@ MultiPaneResponsiveLayout {
 
     id: root
 
-    LayoutClassHelper {
-        id: layout
-        targetWidth: root.width
-    }
-
     Item {
 
         property string iconText: 'Telemetry'
@@ -48,29 +43,8 @@ MultiPaneResponsiveLayout {
         property real columnSize: 0.6
 
         id: leftRoot
-        width: parent.width
+        width: parent ? parent.width : 0
 
-        Column {
-
-            width: parent.width
-            spacing: 16
-
-            // safety, filters, and battery
-            GridLayout {
-
-                id: jointDeviceGrid
-
-                width: parent.width
-
-                rows: layout.compact ? -1 : 1
-                columns: layout.compact ? 1 : -1
-
-                rowSpacing: 8
-                columnSpacing: 8
-
-            }
-
-        }
         RowLayout {
             anchors.fill: parent
             anchors.margins: CommonProperties.geom.margins

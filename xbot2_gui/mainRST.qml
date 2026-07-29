@@ -25,6 +25,11 @@ ApplicationWindow {
 
     readonly property bool isAppRunning: rootStack.depth > 1
 
+    readonly property string footerTitle: {
+        let it = rootStack.currentItem
+        return it && it.footerTitle !== undefined ? it.footerTitle : ""
+    }
+
     font.family: CommonProperties.robosintesiFont.headline.font.family
 
     palette {
@@ -106,16 +111,41 @@ ApplicationWindow {
             color: Robosintesi.colors.background
         }
 
+        Column {
+            id: footerAnimeMark
+            anchors.left: parent.left
+            anchors.leftMargin: CommonProperties.geom.margins
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: CommonProperties.geom.margins
+            spacing: 0
+
+            Label {
+                text: 'AN<font color="' + Robosintesi.colors.ok + '">i</font>ME'
+                textFormat: Text.StyledText
+                font.family: CommonProperties.robosintesiFont.headline.font.family
+                font.pixelSize: 54
+                font.bold: true
+                font.letterSpacing: 2.5
+                color: Robosintesi.colors.text
+            }
+
+            Label {
+                text: mainWindow.footerTitle
+                font.family: CommonProperties.robosintesiFont.body.font.family
+                font.pixelSize: 13
+                font.letterSpacing: 7
+                color: Robosintesi.colors.text
+                opacity: 0.55
+            }
+        }
+
         Image {
             id: footerLogo
             anchors.right: parent.right
             anchors.rightMargin: CommonProperties.geom.margins
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            anchors.topMargin: CommonProperties.geom.margins
-            anchors.bottomMargin: CommonProperties.geom.margins
+            anchors.verticalCenter: footerAnimeMark.verticalCenter
+            height: footerAnimeMark.height
             autoTransform: true
-            // width: 40; height: 40
             fillMode: Image.PreserveAspectFit
             source: Robosintesi.icons.ideogrammaCoolGray
         }
@@ -172,6 +202,8 @@ ApplicationWindow {
         id: bootComponent
         Item {
             anchors.fill: parent
+
+            property string footerTitle: "MAIN PAGE"
 
             RowLayout {
                 anchors.fill: parent
@@ -290,6 +322,8 @@ ApplicationWindow {
                 Item {
                     anchors.fill: parent
 
+                    property string footerTitle: "NETWORK SETTINGS"
+
                     RstIconButton {
                         id: exitNetworkSettings
 
@@ -318,6 +352,8 @@ ApplicationWindow {
                 id: advancedSettingsComponent
                 Item {
                     id: advancedSettings
+
+                    property string footerTitle: "ADVANCED SETTINGS"
 
                     RstIconButton {
                         id: exitAdvancedSettings
@@ -377,10 +413,13 @@ ApplicationWindow {
         id: appComponent
 
         Item {
-            // Proprietà esposta per l'Header
             property string currentTitle: pagesStack.currentItem ? pagesStack.currentItem.item.pageName : "App"
 
-            // -- Widgets e Popup (Attivi solo nell'App) --
+            property string footerTitle: {
+                let p = pagesModel.children[pagesStack.currentIndex]
+                return p ? p.name.toUpperCase() : ""
+            }
+
             SoftSafetyButton {
                 id: softEmergency
                 client: client
