@@ -80,13 +80,15 @@ ApplicationWindow {
             id: connectionIcon
             anchors.right: parent.right
             anchors.rightMargin: CommonProperties.geom.margins
-            anchors.top: headerLogo.top
-            // anchors.topMargin: CommonProperties.geom.margins
-            // anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenter: headerLogo.verticalCenter
             text: client.isConnected ? MaterialSymbolNames.wifiConnected : MaterialSymbolNames.wifiDisconnected
             font.family: 'Material Symbols Outlined'
-            font.pixelSize: 24
-            color: Robosintesi.colors.text
+            font.pixelSize: 32
+            color: client.isConnected ? Robosintesi.colors.text : Robosintesi.colors.error
+            opacity: client.isConnected ? 0.7 : 1.0
+
+            Behavior on color { ColorAnimation { duration: 150 } }
+            Behavior on opacity { NumberAnimation { duration: 150 } }
 
             ToolTip.visible: connectionMouse.containsMouse
             ToolTip.text: client.isConnected
@@ -96,6 +98,7 @@ ApplicationWindow {
             MouseArea {
                 id: connectionMouse
                 anchors.fill: parent
+                anchors.margins: -8
                 hoverEnabled: true
             }
         }
