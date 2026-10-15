@@ -27,6 +27,8 @@ public:
 
 private:
 
+    bool belowBaseLink(const std::string& link_name) const;
+
     RigidBodyDynamics::Model _model;
     Eigen::VectorXd _qeig;
     std::shared_ptr<urdf::UrdfModel> _urdf;
@@ -97,18 +99,35 @@ Pose RobotModel::Impl::getPose(QString frame)
         return Pose();
     }
 
-    auto pos = RigidBodyDynamics::CalcBodyToBaseCoordinates(
+    Eigen::Vector3d pos = RigidBodyDynamics::CalcBodyToBaseCoordinates(
                 _model,
                 _qeig,
                 bid,
                 Eigen::Vector3d::Zero(),
                 false);
 
-    auto rot = RigidBodyDynamics::CalcBodyWorldOrientation(
+    Eigen::Matrix3d rot = RigidBodyDynamics::CalcBodyWorldOrientation(
                 _model,
                 _qeig,
                 bid,
                 false);
+
+    // rbdl's urdf reader attaches the children of base_link to its root body, so the links
+    // below base_link come out relative to base_link: bring them to the world frame
+    if(belowBaseLink(frame.toStdString()))
+    {
+        auto base_bid = _model.GetBodyId("base_link");
+
+        Eigen::Vector3d base_pos = RigidBodyDynamics::CalcBodyToBaseCoordinates(
+                    _model, _qeig, base_bid, Eigen::Vector3d::Zero(), false);
+
+        Eigen::Matrix3d base_rot = RigidBodyDynamics::CalcBodyWorldOrientation(
+                    _model, _qeig, base_bid, false);
+
+        // rbdl orientations map world to body coordinates
+        pos = base_pos + base_rot.transpose() * pos;
+        rot = rot * base_rot;
+    }
 
     Eigen::Quaterniond rot_q_eig(rot.transpose());
 
@@ -191,6 +210,25 @@ QString RobotModel::Impl::parentJointName(QString linkName) const
     }
 
     return QString::fromStdString(joint->name);
+}
+
+bool RobotModel::Impl::belowBaseLink(const std::string& link_name) const
+{
+    auto link = _urdf->getLink(link_name);
+
+    while(link && link->parent_joint)
+    {
+        const auto& parent_name = link->parent_joint->parent_link_name;
+
+        if(parent_name == "base_link")
+        {
+            return true;
+        }
+
+        link = _urdf->getLink(parent_name);
+    }
+
+    return false;
 }
 
 RobotModel::~RobotModel()
