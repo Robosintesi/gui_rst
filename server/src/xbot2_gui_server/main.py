@@ -12,7 +12,14 @@ import argparse
 from aiohttp import web
 import asyncio
 
+from typing import List, Tuple
+
 from . import ros_utils
+
+
+def extra_extensions(cfg: dict) -> List[Tuple[str, str]]:
+    return [tuple(e) for e in cfg.get('extensions') or []]
+
 
 def main():
 
@@ -107,6 +114,8 @@ def main():
             ('xbot2_gui_server.diagnostics', 'DiagnosticsHandler'),
             ('xbot2_gui_server.server_stats', 'ServerStatisticsHandler')
         ]
+
+        ext_list += extra_extensions(cfg)
 
         # load extensions
         for module_name, class_name in ext_list:
