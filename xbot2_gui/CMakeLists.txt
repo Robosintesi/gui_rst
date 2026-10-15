@@ -49,7 +49,10 @@ set_source_files_properties(SharedData1.qml PROPERTIES
     QT_QML_SINGLETON_TYPE TRUE
 )
 
-qt_add_qml_module(xbot2_gui
+# a library like the other modules, so another executable can reuse ClientEndpoint & co.
+qt_add_library(xbot2_gui_main STATIC)
+
+qt_add_qml_module(xbot2_gui_main
     VERSION 1.0
     URI Main
     QML_FILES
@@ -62,11 +65,14 @@ qt_add_qml_module(xbot2_gui
     SharedData1.qml
 )
 
+target_link_libraries(xbot2_gui PRIVATE xbot2_gui_mainplugin)
+
 target_compile_definitions(xbot2_gui
     PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 
 if(WIN32)
     target_compile_options(xbot2_gui PRIVATE "-Wa,-mbig-obj")
+    target_compile_options(xbot2_gui_main PRIVATE "-Wa,-mbig-obj")
 endif()
 
 target_link_libraries(xbot2_gui
