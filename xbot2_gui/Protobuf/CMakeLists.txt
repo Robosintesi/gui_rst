@@ -25,6 +25,7 @@ qt_add_protobuf(xbot2_gui_msgs
     ${PROTO_DIR}/text.proto
     ${PROTO_DIR}/process_output.proto
     ${PROTO_DIR}/theora_packet.proto
+    ${PROTO_DIR}/mpeg_ts_datagram.proto
     QML
     QML_URI "xbot2_gui.msgs"
 )
