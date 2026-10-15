@@ -15,13 +15,16 @@ qt_add_qml_module(xbot2_gui_proto
 
 )
 
+# relative to this file, so it also works when the repo is a subdirectory of another project
+set(PROTO_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../proto)
+
 qt_add_protobuf(xbot2_gui_msgs
     PROTO_FILES
-    ${CMAKE_SOURCE_DIR}/proto/generic.proto
-    ${CMAKE_SOURCE_DIR}/proto/jointstate.proto
-    ${CMAKE_SOURCE_DIR}/proto/text.proto
-    ${CMAKE_SOURCE_DIR}/proto/process_output.proto
-    ${CMAKE_SOURCE_DIR}/proto/theora_packet.proto
+    ${PROTO_DIR}/generic.proto
+    ${PROTO_DIR}/jointstate.proto
+    ${PROTO_DIR}/text.proto
+    ${PROTO_DIR}/process_output.proto
+    ${PROTO_DIR}/theora_packet.proto
     QML
     QML_URI "xbot2_gui.msgs"
 )
