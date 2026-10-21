@@ -41,7 +41,8 @@ endif()
 qt_standard_project_setup(REQUIRES 6.9)
 
 ## ui main
-qt_add_executable(xbot2_gui main.cpp)
+# the Robosintesi app (RstMain); upstream main.cpp and main.qml stay, unused, to ease the merges
+qt_add_executable(xbot2_gui RstMain/main.cpp)
 
 set_property(TARGET xbot2_gui APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/android)
 
@@ -130,6 +131,18 @@ add_subdirectory(Monitoring)
 
 add_subdirectory(Network)
 
+add_subdirectory(Rst)
+
+add_subdirectory(RstApp)
+
+add_subdirectory(RstMain)
+
+add_subdirectory(RstMonitoring)
+
+add_subdirectory(RstNetwork)
+
+add_subdirectory(RstProcess)
+
 if(NOT EMSCRIPTEN)
 
     add_subdirectory(Protobuf)
@@ -157,6 +170,12 @@ add_subdirectory(ViewerQuick3D)
 
 # robot model
 add_subdirectory(RobotModel/)
+
+# everything xbot2_gui links (the QML modules above, rst_app, Qt): a project app links this target
+# and gets the modules added to the fork later
+get_target_property(RST_GUI_LIBS xbot2_gui LINK_LIBRARIES)
+add_library(rst_gui_modules INTERFACE)
+target_link_libraries(rst_gui_modules INTERFACE ${RST_GUI_LIBS})
 
 # deploy
 if(NOT ANDROID AND NOT EMSCRIPTEN)

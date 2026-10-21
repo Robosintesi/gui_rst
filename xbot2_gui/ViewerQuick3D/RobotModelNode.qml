@@ -15,6 +15,8 @@ Node {
 
     property color color: 'red'
 
+    property color selectedColor: Qt.lighter(color, 1.7)
+
     property alias jointNames: robotModel.jointNames
 
     property alias ndof: robotModel.ndof
@@ -63,6 +65,7 @@ Node {
             localPosition: modelData.origin_xyz
             localRotation: modelData.origin_rot
             color: root.color
+            selectedColor: root.selectedColor
             alpha: root.alpha
             visible: root.visible
             client: root.client

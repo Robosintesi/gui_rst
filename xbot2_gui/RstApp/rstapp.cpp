@@ -1,0 +1,251 @@
+// from robot_monitoring xbot2_gui/main.cpp (proto_ros2): AppData is not reusable from there,
+// keep it aligned when upstream changes it
+#include "rstapp.h"
+
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
+#include <QQmlContext>
+#include <QtQuickControls2/QQuickStyle>
+#include <QFont>
+#include <QFontDatabase>
+#include <QCommandLineParser>
+#include <QtWidgets/QApplication>
+// module header only (QQuickWindow, QPixmap, QClipboard for AppData), no QuickWidgets library
+#include <QtQuickWidgets/QtQuickWidgets>
+#include <QCryptographicHash>
+
+#ifdef __EMSCRIPTEN__
+#include <emscripten/val.h>
+#endif
+
+#ifndef __EMSCRIPTEN__
+#include <QtWebView/QtWebView>
+#endif
+
+#include <QtCore/qcoreapplication_platform.h>
+
+class AppData : public QObject
+{
+    Q_OBJECT
+
+public:
+
+    AppData(const QList<int> &appVersion, QObject * parent = nullptr):
+        QObject(parent)
+    {
+        version = appVersion;
+        versionString = QString("%1.%2.%3").arg(version[0]).arg(version[1]).arg(version[2]);
+#ifdef __EMSCRIPTEN__
+        wasm = true;
+#endif
+    }
+
+    Q_PROPERTY(QList<int> version MEMBER version);
+
+    Q_PROPERTY(QString hostname MEMBER hostname);
+
+    Q_PROPERTY(int port MEMBER port);
+
+    Q_PROPERTY(bool wasm MEMBER wasm);
+
+    Q_PROPERTY(bool portFromCmdLine MEMBER portFromCmdLine);
+
+    Q_INVOKABLE void updateUi();
+
+    Q_INVOKABLE uint64_t getTimeNs() const;
+
+    Q_INVOKABLE QString getDateTime() const;
+
+    Q_INVOKABLE QString cryptoHash(QString text) const
+    {
+        QCryptographicHash hasher(QCryptographicHash::Algorithm::Sha256);
+        hasher.addData(text.toUtf8());
+        return QString(hasher.result().toBase64());
+    }
+
+    Q_INVOKABLE bool copyToClipboard(QString text)
+    {
+        auto clipboard = QGuiApplication::clipboard();
+
+        if(!clipboard)
+        {
+            qWarning("could not get clipboard");
+            return false;
+        }
+
+        clipboard->setText(text);
+        return true;
+    }
+
+    Q_INVOKABLE QByteArray base64ToBytes(QString b64)
+    {
+        return QByteArray::fromBase64(b64.toUtf8());
+    }
+
+    Q_INVOKABLE static QUrl fromUserInput(const QString& userInput)
+    {
+        if (userInput.isEmpty())
+            return QUrl::fromUserInput("about:blank");
+        const QUrl result = QUrl::fromUserInput(userInput);
+        return result.isValid() ? result : QUrl::fromUserInput("about:blank");
+    }
+
+    Q_INVOKABLE void screenshot(QQuickWindow *widget, QString fileName)
+    {
+        QPixmap pixmap = QPixmap::fromImage(widget->grabWindow());
+        QFile f(fileName.replace(" ", "_") + ".png");
+        f.open(QIODevice::WriteOnly);
+        if(f.isOpen()) {
+            pixmap.save(&f, "PNG");
+        }
+    }
+
+    Q_INVOKABLE void keepScreenOn(bool on)
+    {
+#ifdef ANDROID
+        QNativeInterface::QAndroidApplication::runOnAndroidMainThread(
+            [on]()
+            {
+                QJniObject activity = QNativeInterface::QAndroidApplication::context();
+
+                if (activity.isValid())
+                {
+                    QJniObject window =
+                        activity.callObjectMethod("getWindow", "()Landroid/view/Window;");
+
+                    if (window.isValid())
+                    {
+                        const int FLAG_KEEP_SCREEN_ON = 128;
+
+                        if (on)
+                        {
+                            window.callMethod<void>("addFlags", "(I)V", FLAG_KEEP_SCREEN_ON);
+                        }
+                        else
+                        {
+                            window.callMethod<void>("clearFlags", "(I)V", FLAG_KEEP_SCREEN_ON);
+                        }
+                    }
+                }
+
+                QJniEnvironment env;
+
+                if (env->ExceptionCheck()) {
+                    env->ExceptionClear();
+                }
+            });
+#else
+        static_cast<void>(on);
+#endif
+    }
+
+public:
+
+    QString hostname { "localhost" };
+    int port { 8080 };
+    QList<int> version;
+    QString versionString;
+    bool wasm = false;
+    bool portFromCmdLine = false;
+
+
+};
+
+int rst::runApp(int &argc, char *argv[], const QString &appName, const QString &qmlModule,
+                const QList<int> &version)
+{
+
+    // create appdata global object
+    AppData appdata(version);
+
+#ifdef __EMSCRIPTEN__
+    emscripten::val location = emscripten::val::global("location");
+    appdata.hostname = QString::fromStdString(location["hostname"].as<std::string>());
+    appdata.port = std::stoi(location["port"].as<std::string>());
+#endif
+
+
+    // set app properties
+    QApplication app(argc, argv);
+    // Inter, the brand body font, for every text and not only the controls
+    for (auto file : {"Inter_18pt-Regular.ttf", "Inter_18pt-Bold.ttf"})
+        if (QFontDatabase::addApplicationFont(QString(":/qt/qml/Rst/fonts/") + file) < 0)
+            qWarning() << "could not load font" << file;
+    auto font = app.font();
+    font.setFamily("Inter 18pt");
+    font.setPixelSize(12);
+    app.setFont(font);
+
+    app.setOrganizationName("Robosintesi");
+    app.setApplicationName(appName);
+    app.setApplicationVersion(appdata.versionString);
+
+
+    // cli
+    QCommandLineParser parser;
+    parser.addHelpOption();
+    parser.addVersionOption();
+
+    parser.addOptions({
+                       {{"p", "port"}, "Server port", "port"}
+    });
+
+    parser.process(app);
+
+    if(parser.isSet("port"))
+    {
+        appdata.port = parser.value("port").toInt();
+        appdata.portFromCmdLine = true;
+        qInfo() << "set port to " << appdata.port;
+    }
+
+    // setup environment
+
+    // verbose output
+    //    qputenv("QSG_INFO", "1");
+    // the Rst style draws Button, CheckBox, Switch, Slider, ProgressBar; Material the rest
+    QQuickStyle::setStyle("Rst");
+    QQuickStyle::setFallbackStyle("Material");
+    qputenv("QT_QUICK_CONTROLS_MATERIAL_THEME", "Dark");
+    qputenv("QT_QUICK_CONTROLS_MATERIAL_VARIANT", "Dense");
+    qputenv("QT3D_RENDERER", "opengl");
+
+#ifndef __EMSCRIPTEN__
+    // initialize internal browser
+    QtWebView::initialize();
+#endif
+
+    // register appdata
+    QQmlApplicationEngine engine;
+    engine.rootContext()->setContextProperty("appData", &appdata);
+
+    // load main qml file
+    const QUrl url(QString("qrc:/qt/qml/%1/main.qml").arg(qmlModule));
+    QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
+                     &app, [url](QObject *obj, const QUrl &objUrl) {
+        if (!obj && url == objUrl)
+            QCoreApplication::exit(-1);
+    }, Qt::QueuedConnection);
+    engine.load(url);
+
+    // run event loop
+    return app.exec();
+}
+
+#include "rstapp.moc"
+
+void AppData::updateUi()
+{
+    QCoreApplication::processEvents();
+}
+
+uint64_t AppData::getTimeNs() const
+{
+    auto now = std::chrono::high_resolution_clock::now();
+    return now.time_since_epoch().count();
+}
+
+QString AppData::getDateTime() const
+{
+    return QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm_ss");
+}

@@ -13,6 +13,7 @@ Node {
     property alias visible: model.visible
     property alias axesVisible: axes.visible
     property color color: Qt.rgba(0.8, 0.8, 0.8, 1.0)
+    property color selectedColor: Qt.lighter(color, 1.7)
     property alias alpha: material.opacity
 
     property alias scale: model.scale
@@ -47,7 +48,7 @@ Node {
                 PrincipledMaterial {
                     id: material
                     baseColor: root.isSelected ?
-                                Qt.lighter(root.color, 1.7) :
+                                root.selectedColor :
                                 root.color
                     metalness: 0
                     roughness: 0

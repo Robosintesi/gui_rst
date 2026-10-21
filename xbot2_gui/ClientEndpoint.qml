@@ -27,6 +27,9 @@ Item
     // alias for the underlying websocket's active property
     property alias active: socket.active
 
+    // false keeps the client disconnected (no retry)
+    property bool autoConnect: true
+
     //
     property bool isConnected: false
 
@@ -270,6 +273,7 @@ Item
         SharedData.vmax = msg.vmax
         SharedData.taumax = msg.taumax
         SharedData.jointNames = msg.jnames
+        SharedData.jointGroups = msg.groups ?? [{name: 'joints', joints: msg.jnames}]
         SharedData.latestJointState = msg.jstate
         isFinalized = true
         finalized()
@@ -312,7 +316,7 @@ Item
         id: retryConnect
         interval: 2000
         repeat: true
-        running: !root.active
+        running: !root.active && root.autoConnect
 
         onTriggered: {
             doRequestAsync('GET', '/version', '', true)
