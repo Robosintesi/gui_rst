@@ -18,6 +18,7 @@ from urdf_parser_py import urdf as urdf_parser
 
 from .server import ServerBase
 from . import utils
+from .joint_groups import joint_groups
 
 from .proto import jointstate_pb2, generic_pb2
 
@@ -202,7 +203,12 @@ class JointStateHandler:
                 joint_info['vmax'].append(0)
                 joint_info['taumax'].append(0)
 
-            
+        # groups of joints from the srdf, for the gui; a bad srdf must not break the joint info
+        try:
+            joint_info['groups'] = joint_groups(ros_handle.get_srdf(), model, js_msg['name'])
+        except Exception as e:
+            print(f'joint groups unavailable: {e}')
+            joint_info['groups'] = joint_groups(None, model, js_msg['name'])
 
         print('done!')
 

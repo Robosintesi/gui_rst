@@ -37,7 +37,22 @@ class Ros2Utils:
                                                 on_robot_desc_recv, 
                                                 queue_size=1,
                                                 latch=True)
-        
+
+        self.srdf = None
+
+        def on_robot_desc_semantic_recv(msg):
+            self.srdf = msg.data
+            self.srdf_sub = None
+
+        self.srdf_sub = self.create_subscription(String,
+                                                 'xbotcore/robot_description_semantic',
+                                                 on_robot_desc_semantic_recv,
+                                                 queue_size=1,
+                                                 latch=True)
+
+    def get_srdf(self):
+        return self.srdf
+
     def get_urdf(self):
         return self.urdf
 
