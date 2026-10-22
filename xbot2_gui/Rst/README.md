@@ -47,8 +47,9 @@ Space Grotesk and Inter are under the SIL Open Font License, Material Symbols un
 
 ## Logos
 
-`logos` holds the ideogram and the logotype in blue (4159 C), cool gray and black. The brand
-book also has a horizontal and a vertical lock-up of the two, not included yet.
+`logos` holds the ideogram and the logotype in blue (4159 C), cool gray and black, and the
+horizontal lock-up of the two in white (`logotype_horizontal_white.svg`). The brand book also has
+a vertical lock-up, not included yet.
 
 - Never rotate or stretch a logo, and never swap its parts: use
   `fillMode: Image.PreserveAspectFit`.

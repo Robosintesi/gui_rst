@@ -39,6 +39,7 @@ qt_add_qml_module(rst
     logos/logotype_black.svg
     logos/logotype_blue.svg
     logos/logotype_cool_gray.svg
+    logos/logotype_horizontal_white.svg
 )
 
 target_link_libraries(xbot2_gui PRIVATE rstplugin)

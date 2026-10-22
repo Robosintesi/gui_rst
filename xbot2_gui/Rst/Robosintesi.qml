@@ -83,6 +83,7 @@ QtObject {
         readonly property string logotypeBlue: Qt.resolvedUrl("logos/logotype_blue.svg")
         readonly property string logotypeCoolGray: Qt.resolvedUrl("logos/logotype_cool_gray.svg")
         readonly property string logotypeBlack: Qt.resolvedUrl("logos/logotype_black.svg")
+        readonly property string logotypeHorizontalWhite: Qt.resolvedUrl("logos/logotype_horizontal_white.svg")
     }
 
     // Material Symbols code points missing from the fork's MaterialSymbolNames
