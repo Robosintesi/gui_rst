@@ -68,7 +68,6 @@ Rectangle {
                 text: row.name
                 elide: Text.ElideRight
                 font.pixelSize: 16
-                font.bold: row.selected
                 color: Robosintesi.colors.text
             }
 
@@ -167,7 +166,6 @@ Rectangle {
                 Layout.alignment: Qt.AlignRight
                 text: Format.number(row.atZero ? 0 : row.value, row.decimals)
                 font.pixelSize: 22
-                font.bold: true
                 font.features: ({ "tnum": 1 })
                 color: row.atZero ? Robosintesi.status.ok : Robosintesi.colors.text
             }

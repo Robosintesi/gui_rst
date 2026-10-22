@@ -28,8 +28,6 @@ qt_add_qml_module(rst
     Popup.qml
     RESOURCES
     fonts/Inter_18pt-Regular.ttf
-    fonts/Inter_18pt-Bold.ttf
-    fonts/Inter_18pt-SemiBold.ttf
     fonts/MaterialSymbolsRoundedThin.ttf
     fonts/MaterialSymbolsRoundedFilled.ttf
     fonts/SpaceGrotesk-Bold.ttf

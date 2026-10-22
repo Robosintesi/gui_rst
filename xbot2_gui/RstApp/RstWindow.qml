@@ -28,7 +28,7 @@ ApplicationWindow {
     property list<PageItem> pages
     property alias client: client
 
-    font.family: Robosintesi.fonts.body.font.family
+    font.family: Robosintesi.fonts.headline.font.family
 
     // the Material controls and the fork's components (CommonProperties) get the Robosintesi values
     M.Material.accent: Robosintesi.colors.accent
@@ -105,7 +105,6 @@ ApplicationWindow {
                 Label {
                     text: tab.text
                     font.pixelSize: 15
-                    font.bold: tab.selected
                     color: tab.tint
                 }
             }

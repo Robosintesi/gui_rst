@@ -25,7 +25,8 @@ Rectangle {
     readonly property alias count: shown.count
     readonly property alias contentHeight: view.contentHeight
 
-    readonly property font cellFont: Qt.font({ family: "monospace", pixelSize: fontSize })
+    readonly property font cellFont: Qt.font({ family: Robosintesi.fonts.body.font.family,
+                                                pixelSize: fontSize, features: { "tnum": 1 } })
     readonly property var levelNames: ["INFO", "OK", "WARN", "ERR"]
     readonly property var levelColors: [Robosintesi.colors.textSecondary, Robosintesi.status.ok,
                                         Robosintesi.status.warn, Robosintesi.status.err]

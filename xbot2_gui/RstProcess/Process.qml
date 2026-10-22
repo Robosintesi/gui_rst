@@ -345,7 +345,6 @@ Item {
                     Layout.fillWidth: true
                     text: statusRow.name
                     elide: Text.ElideRight
-                    font.family: Robosintesi.fonts.headline.font.family
                     font.pixelSize: 20
                     color: Robosintesi.colors.text
                 }
@@ -354,6 +353,7 @@ Item {
                     Layout.fillWidth: true
                     text: `${(statusRow.status || "unknown").toLowerCase()} · ${statusRow.kind}`
                     elide: Text.ElideRight
+                    font.family: Robosintesi.fonts.body.font.family
                     font.pixelSize: 13
                     color: statusRow.failed ? Robosintesi.status.err
                                             : statusRow.active ? Robosintesi.status.ok : Robosintesi.colors.textSecondary

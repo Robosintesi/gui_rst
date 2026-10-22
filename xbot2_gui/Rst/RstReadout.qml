@@ -41,7 +41,6 @@ Rectangle {
                 Layout.fillWidth: true
                 text: readout.label
                 elide: Text.ElideRight
-                font.family: readout.kicker ? Robosintesi.fonts.headline.font.family : Robosintesi.fonts.body.font.family
                 font.pixelSize: readout.kicker ? 12 : 13
                 font.letterSpacing: readout.kicker ? 3 : 0
                 color: Robosintesi.colors.textSecondary
@@ -71,7 +70,6 @@ Rectangle {
                 Layout.alignment: Qt.AlignBaseline
                 text: readout.value
                 font.pixelSize: readout.valueSize
-                font.bold: true
                 font.features: ({ "tnum": 1 })
                 color: readout.value === "—" ? Qt.alpha(Robosintesi.colors.text, 0.4) : Robosintesi.colors.text
             }

@@ -53,7 +53,6 @@ Rectangle {
                 contentItem: Label {
                     text: item.text
                     font.pixelSize: root.fontSize
-                    font.bold: item.selected
                     color: item.selected ? Robosintesi.colors.background : Robosintesi.colors.text
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter

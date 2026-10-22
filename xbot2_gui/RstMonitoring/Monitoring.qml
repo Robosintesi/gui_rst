@@ -392,9 +392,7 @@ Item {
                         Layout.fillWidth: true
                         text: root.selected
                         elide: Text.ElideRight
-                        // Inter: the 1 of Space Grotesk reads badly in the joint names
                         font.pixelSize: 34
-                        font.bold: true
                         color: Robosintesi.colors.text
                     }
 
@@ -519,7 +517,6 @@ Item {
                     Label {
                         text: root.selected
                         font.pixelSize: 18
-                        font.bold: true
                         color: Robosintesi.colors.text
                     }
 

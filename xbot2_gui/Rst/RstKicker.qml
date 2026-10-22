@@ -12,7 +12,6 @@ RowLayout {
     Label {
         id: title
         Layout.alignment: Qt.AlignBaseline
-        font.family: Robosintesi.fonts.headline.font.family
         font.pixelSize: 12
         font.letterSpacing: 3
         color: Robosintesi.colors.textSecondary

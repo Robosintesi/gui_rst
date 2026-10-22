@@ -154,7 +154,6 @@ RstPanel {
                 Layout.alignment: Qt.AlignBaseline
                 text: Format.number(panel.target, panel.decimals)
                 font.pixelSize: 44
-                font.bold: true
                 font.features: ({ "tnum": 1 })
                 color: Robosintesi.colors.text
             }

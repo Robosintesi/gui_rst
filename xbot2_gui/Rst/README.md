@@ -38,9 +38,8 @@ Contrast on `background`:
 
 | Use | Font | Token |
 |---|---|---|
-| Titles, subtitles (uppercase), kickers | Space Grotesk Bold | `fonts.headline` |
-| Buttons, sentence case ("Start") | Inter SemiBold | `fonts.bodySemiBold` |
-| Everything else, the default of `RstWindow` | Inter Regular and Bold | `fonts.body` |
+| Everything (titles, subtitles, kickers, buttons, values, labels), the default of `RstWindow` | Space Grotesk Bold | `fonts.headline` |
+| Running text only: logs, descriptions, text fields | Inter Regular | `fonts.body` |
 | Icons (`RstIcon`): thin (FILL 0, weight 300), filled and weight 500 in primary buttons | Material Symbols Rounded, static (`fonts/static_icons.py`) | `fonts.icons`, `fonts.iconsFilled` |
 
 Space Grotesk and Inter are under the SIL Open Font License, Material Symbols under Apache 2.0.

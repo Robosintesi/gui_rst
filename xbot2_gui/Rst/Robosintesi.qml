@@ -49,21 +49,14 @@ QtObject {
         property real disabledOpacity: 0.4
     }
 
-    // Space Grotesk for titles and kickers, Inter for the rest (buttons in Inter SemiBold)
+    // as the brand book: Space Grotesk Bold for everything (the default of RstWindow), Inter
+    // Regular only for running text (logs, descriptions, fields)
     property QtObject fonts: QtObject {
         readonly property FontLoader headline: FontLoader {
             source: Qt.resolvedUrl("fonts/SpaceGrotesk-Bold.ttf")
         }
         readonly property FontLoader body: FontLoader {
             source: Qt.resolvedUrl("fonts/Inter_18pt-Regular.ttf")
-        }
-        // the bold face of body, picked by font.bold
-        readonly property FontLoader bodyBold: FontLoader {
-            source: Qt.resolvedUrl("fonts/Inter_18pt-Bold.ttf")
-        }
-        // buttons, with font.weight: Font.DemiBold
-        readonly property FontLoader bodySemiBold: FontLoader {
-            source: Qt.resolvedUrl("fonts/Inter_18pt-SemiBold.ttf")
         }
         // Material Symbols Rounded for RstIcon, static (fonts/static_icons.py): thin and filled
         readonly property FontLoader icons: FontLoader {

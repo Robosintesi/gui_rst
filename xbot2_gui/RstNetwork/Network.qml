@@ -155,7 +155,6 @@ Item {
                             Layout.fillWidth: true
                             text: `${root.client.hostname}:${root.client.port}`
                             elide: Text.ElideRight
-                            font.family: Robosintesi.fonts.headline.font.family
                             font.pixelSize: 34
                             font.letterSpacing: 1
                             color: Robosintesi.colors.text
@@ -163,6 +162,7 @@ Item {
 
                         Label {
                             text: `server ${root.serverVersion} · client ${Qt.application.name} ${appData.version.join('.')}`
+                            font.family: Robosintesi.fonts.body.font.family
                             font.pixelSize: 14
                             color: Robosintesi.colors.textSecondary
                         }
@@ -474,6 +474,7 @@ Item {
             topPadding: 0
             bottomPadding: 0
             verticalAlignment: TextInput.AlignVCenter
+            font.family: Robosintesi.fonts.body.font.family
             font.pixelSize: 18
             color: Robosintesi.colors.text
             onAccepted: field.accepted()

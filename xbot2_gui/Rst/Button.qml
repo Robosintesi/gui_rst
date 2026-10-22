@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls.impl
 import QtQuick.Templates as T
 
-// Button of the Rst style (11a): pill in Inter SemiBold, plus disabled, focus, flat, checked and icon
+// Button of the Rst style (11a): pill, plus disabled, focus, flat, checked and icon
 T.Button {
     id: control
 
@@ -18,8 +18,6 @@ T.Button {
     padding: 8
     horizontalPadding: 16
     spacing: 6
-    font.family: Robosintesi.fonts.bodySemiBold.font.family
-    font.weight: Font.DemiBold
     font.pixelSize: Robosintesi.fonts.control
     opacity: enabled ? 1 : Robosintesi.geom.disabledOpacity
 
